@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import Navbar from '@/components/NavBar';
 import { LoaderCircle } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import Carousel from '@/js';
 
 const BACKENDURL = process.env.NEXT_PUBLIC_APP_BACKEND_URL;
@@ -22,15 +23,15 @@ interface AttendeeInterface {
   category: string;
 }
 
-const earlyBirdDeadline = new Date("2024-12-10T23:59:59Z");
-const regularDeadline = new Date("2024-12-25T23:59:59Z");
+const earlyBirdDeadline = new Date("2025-04-10T23:59:59Z");
+const regularDeadline = new Date("2025-04-25T23:59:59Z");
 
 export default function SoloAttendee({ params }: { params: { id: string } }) {
+  const router = useRouter();
   const [attendee, setAttendee] = useState<AttendeeInterface | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [billAmount, setBillAmount] = useState<number>(0);
-  const [payable, setPayable] = useState<boolean>(true);
   const currentDate = new Date();
 
   useEffect(() => {
@@ -42,10 +43,8 @@ export default function SoloAttendee({ params }: { params: { id: string } }) {
         // Determine the fee based on the current date
         if (currentDate <= earlyBirdDeadline) {
           setBillAmount(attendeeData.early_bird_fee);
-        } else if (currentDate <= regularDeadline) {
-          setBillAmount(attendeeData.regular_fee);
         } else {
-          setPayable(false); // Disable payment if the deadline has passed
+          setBillAmount(attendeeData.regular_fee);
         }
 
         setAttendee(attendeeData);
@@ -59,14 +58,8 @@ export default function SoloAttendee({ params }: { params: { id: string } }) {
     fetchData();
   }, [params.id]);
 
-  const payment = async () => {
-    try {
-      const response = await axios.get(`${BACKENDURL}/registration/pay/${params.id}`);
-      const { url } = response.data;
-      window.location.href = url;
-    } catch (error) {
-      console.error(error);
-    }
+  const handlePayment = () => {
+    router.push(`/payment/${params.id}`);
   };
 
   if (loading)
@@ -78,6 +71,9 @@ export default function SoloAttendee({ params }: { params: { id: string } }) {
 
   if (error) return <p>Error: {error}</p>;
   if (!attendee) return <p>Attendee not found</p>;
+
+  const isDeadlinePassed = currentDate > regularDeadline;
+  const isEarlyBird = currentDate <= earlyBirdDeadline;
 
   return (
     <main className="flex flex-col min-h-screen">
@@ -103,19 +99,32 @@ export default function SoloAttendee({ params }: { params: { id: string } }) {
               <span className='text-red-500 font-semibold'>Not Paid</span>
             )}
           </p>
-          {!attendee.payment_status && payable && (
-            <button
-              onClick={payment}
-              className="px-4 py-2 mt-4 bg-green-500 text-white rounded hover:bg-green-700"
-            >
-              {`Pay ${billAmount} ${attendee.currency}`}
-            </button>
+          {!attendee.payment_status && !isDeadlinePassed && (
+            <div className="mt-6 flex flex-col items-center">
+              {isEarlyBird && (
+                <p className="text-green-600 font-medium mb-2">
+                  Early bird price available!
+                </p>
+              )}
+              <button
+                onClick={handlePayment}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-semibold"
+              >
+                {`Pay ${billAmount} ${attendee.currency}`}
+              </button>
+            </div>
           )}
-          {!payable && <p className="text-red-500 font-semibold mt-4">Payment deadline has passed</p>}
+          {isDeadlinePassed && !attendee.payment_status && (
+            <div className="mt-6 flex flex-col items-center">
+              <p className="text-yellow-600 font-medium">
+                Registration is currently closed. Please contact the organizers for late registration.
+              </p>
+            </div>
+          )}
         </div>
       </div>
-          {/* Carousel Section */}
-          <div className="container mx-auto px-4 py-8 hidden">
+      {/* Carousel Section */}
+      <div className="container mx-auto px-4 py-8 hidden">
         <Carousel/>
       </div>
       <Footer />

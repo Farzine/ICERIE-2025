@@ -51,7 +51,7 @@ export default function PaymentPage({ params }: { params: { id: string } }) {
 
   const handlePayment = async () => {
     try {
-      const response = await axios.get(`${BACKENDURL}/registration/pay/${params.id}`);
+      const response = await axios.get(`${BACKENDURL}/payment/pay/${params.id}`); // Updated route
       const { url } = response.data;
       window.location.href = url;
     } catch (err) {

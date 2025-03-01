@@ -38,7 +38,7 @@ AdminSchema.methods.comparePassword = function(password, cb) {
 
 const Admin = mongoose.model('Admin', AdminSchema);
 
-// Initialize the admin if not exists
+
 const initializeAdmin = async () => {
   const existingAdmin = await Admin.findOne();
   if (!existingAdmin) {

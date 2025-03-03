@@ -8,8 +8,8 @@ const feeData = [
   },
   {
     category: "Local Delegates (Participant)",
-    early_bird_fee: 5000,
-    regular_fee: 6000,
+    early_bird_fee: 1,
+    regular_fee: 3,
     currency: "BDT",
   },
   {

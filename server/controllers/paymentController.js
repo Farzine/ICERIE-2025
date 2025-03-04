@@ -123,9 +123,9 @@ exports.checkPaymentStatus = async (req, res) => {
     if (!attendee) return res.status(404).json({ error: "Attendee not found" })
 
     // For debugging
-    console.log(
-      `Checking payment status for ${attendee.name}, ID: ${attendee._id}, Status: ${attendee.payment_status ? "Paid" : "Unpaid"}`,
-    )
+    // console.log(
+    //   `Checking payment status for ${attendee.name}, ID: ${attendee._id}, Status: ${attendee.payment_status ? "Paid" : "Unpaid"}`,
+    // )
 
     res.json({
       name: attendee.name,

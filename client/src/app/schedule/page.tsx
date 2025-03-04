@@ -113,18 +113,35 @@ const Schedule: React.FC = () => {
             </h1>
           </div>
 
-          {/* Render schedule cards */}
-          {schedule.map((item, index) => (
-            <Schedulecard
+            {/* Render schedule cards */}
+            {!isLoading ? (
+            schedule.map((item, index) => (
+              <Schedulecard
               key={index}
               title={item.session}
               date={item.date}
               start_time={item.start_time}
               end_time={item.end_time}
               checkend={index === schedule.length - 1}
-            />
-          ))}
-          {isLoading && <div>Loading...</div>}
+              />
+            ))
+            ) : (
+            // Skeleton loader
+            Array(10).fill(0).map((_, index) => (
+              <div key={index} className="flex flex-col md:flex-row justify-around py-3 px-4 md:px-40 items-center border-b border-gray-200">
+              <div className="w-full md:w-1/3 py-2 flex justify-center">
+                <div className="h-6 w-3/4 bg-gray-200 animate-pulse rounded"></div>
+              </div>
+              <div className="w-full md:w-1/3 py-2 flex justify-center">
+                <div className="h-6 w-3/4 bg-gray-200 animate-pulse rounded"></div>
+              </div>
+              <div className="w-full md:w-1/3 py-2 flex justify-center">
+                <div className="h-6 w-3/4 bg-gray-200 animate-pulse rounded"></div>
+              </div>
+              </div>
+            ))
+            )}
+            {error && <div className="text-red-500 text-center py-4">{error}</div>}
         </div>
 
         {/* session list */}
@@ -164,7 +181,7 @@ const Schedule: React.FC = () => {
           </div>
 
           {/* Render SessionListItem cards */}
-          {sessionList.map((item, index) => (
+          {/* {sessionList.map((item, index) => (
             <Schedulecard
               key={index}
               title={item.sessionTheme}
@@ -174,7 +191,35 @@ const Schedule: React.FC = () => {
               checkend={index === sessionList.length - 1}
             />
           ))}
-          {isLoading && <div>Loading...</div>}
+          {isLoading && <div>Loading...</div>} */}
+          {!isLoading ? (
+            sessionList.map((item, index) => (
+              <Schedulecard
+              key={index}
+              title={item.sessionTheme}
+              date={item.venue}
+              start_time={item.start_time}
+              end_time={item.end_time}
+              checkend={index === sessionList.length - 1}
+              />
+            ))
+            ) : (
+            // Skeleton loader
+            Array(10).fill(0).map((_, index) => (
+              <div key={index} className="flex flex-col md:flex-row justify-around py-3 px-4 md:px-40 items-center border-b border-gray-200">
+              <div className="w-full md:w-1/3 py-2 flex justify-center">
+                <div className="h-6 w-3/4 bg-gray-200 animate-pulse rounded"></div>
+              </div>
+              <div className="w-full md:w-1/3 py-2 flex justify-center">
+                <div className="h-6 w-3/4 bg-gray-200 animate-pulse rounded"></div>
+              </div>
+              <div className="w-full md:w-1/3 py-2 flex justify-center">
+                <div className="h-6 w-3/4 bg-gray-200 animate-pulse rounded"></div>
+              </div>
+              </div>
+            ))
+            )}
+            {error && <div className="text-red-500 text-center py-4">{error}</div>}
         </div>
       </div>
             {/* Carousel Section */}

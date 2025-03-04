@@ -24,8 +24,8 @@ interface AttendeeInterface {
   val_id: string
 }
 
-const earlyBirdDeadline = new Date("2025-04-10T23:59:59Z")
-const regularDeadline = new Date("2025-04-25T23:59:59Z")
+const earlyBirdDeadline = new Date("2025-03-25T23:59:59Z")
+const regularDeadline = new Date("2025-04-10T23:59:59Z")
 
 export default function SoloAttendee({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -53,16 +53,6 @@ export default function SoloAttendee({ params }: { params: { id: string } }) {
       }
 
       setAttendee(attendeeData)
-      try {
-        const status = await axios.post(`https://epayment.sust.edu/api/payment/status/${attendeeData.val_id}`)
-        if (status.data.paymentStatusCode === "PAID"){
-          setAttendee({...attendeeData, payment_status: true
-          })
-        }
-        
-      } catch (error) {
-        console.log(error)
-      }
       setLoading(false)
     } catch (error: any) {
       setError(error.message)

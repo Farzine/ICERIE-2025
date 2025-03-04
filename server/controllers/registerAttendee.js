@@ -1,4 +1,5 @@
 const Attendee = require("../models/attendee");
+const axios = require("axios");
 const feeData = [
   {
     category: "Local Delegates (Author)",
@@ -8,8 +9,8 @@ const feeData = [
   },
   {
     category: "Local Delegates (Participant)",
-    early_bird_fee: 1,
-    regular_fee: 3,
+    early_bird_fee: 5000,
+    regular_fee: 6000,
     currency: "BDT",
   },
   {
@@ -65,6 +66,18 @@ const getAttendeeByID = async (req, res) => {
     const attendee = await Attendee.findById(id);
     if (!attendee) {
       return res.status(404).json({ message: "Attendee not found" });
+    }
+    try {
+      const paymentValidationUrl = `https://epayment.sust.edu/api/payment/status/${attendee.val_id}`
+      console.log("Payment validation URL: ",paymentValidationUrl);
+      const payment = await axios.post(paymentValidationUrl);
+      console.log("Payment response status: ",payment.data.status);
+      if(payment.data.status == "200"){
+        console.log("Paid successfully 💸💸");
+        attendee.payment_status = true;
+      }
+    } catch (error) {
+      console.log(error);
     }
     res.status(200).json(attendee);
   } catch (error) {

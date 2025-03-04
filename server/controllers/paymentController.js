@@ -36,7 +36,7 @@ exports.initiatePayment = async (req, res) => {
       formData: {
         name: attendee.name,
         reg: attendeeId,
-        amount: 1,
+        amount: amount,
         email: attendee.email,
         mobile: attendee.phone,
         ipn_url: `${process.env.NEXT_PUBLIC_APP_BACKEND_URL}/payment/ipn`,

@@ -31,7 +31,7 @@ exports.initiatePayment = async (req, res) => {
       headers: {
         "Content-Type": "multipart/form-data; boundary=---011000010111000001101001",
         "User-Agent": "insomnia/10.3.0",
-        Authorization: `Bearer ${process.env.PAYMENT_API_KEY}`, // Use an environment variable for security
+        Authorization: `Bearer ${process.env.PAYMENT_API_KEY}`,
       },
       formData: {
         name: attendee.name,

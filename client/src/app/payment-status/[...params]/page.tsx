@@ -108,7 +108,7 @@ export default function PaymentSuccess({ params }: { params: { params: string[] 
               <XCircle className="text-red-500 mb-4" size={60} />
               <h2 className="text-2xl font-bold mb-2">Payment Not Completed</h2>
               <p className="text-gray-600 mb-6">
-                We haven't received your payment yet. Please try again or contact support if you believe this is an
+                We haven&#39;t received your payment yet. Please try again or contact support if you believe this is an
                 error.
               </p>
               {transactionId && <p className="text-gray-600 mb-6">Transaction ID: {transactionId}</p>}

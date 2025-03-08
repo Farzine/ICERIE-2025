@@ -13,7 +13,7 @@ module.exports = {
         'customGray': '#E9E4E4',
       },
       animation: {
-        scroll: 'scroll 30s linear infinite',
+        scroll: 'scroll 60s linear infinite',
       },
       keyframes: {
         scroll: {

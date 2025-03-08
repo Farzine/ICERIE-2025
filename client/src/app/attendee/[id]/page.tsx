@@ -1,122 +1,145 @@
-"use client"
-import { useEffect, useState, useCallback } from "react"
-import axios from "axios"
-import Footer from "@/components/Footer"
-import Navbar from "@/components/NavBar"
-import { LoaderCircle } from "lucide-react"
-import Image from "next/image"
-import { useRouter, useSearchParams } from "next/navigation"
-import Carousel from "@/js"
+"use client";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/NavBar";
+import Carousel from "@/js";
+import axios from "axios";
+import { LoaderCircle } from "lucide-react";
+import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
-const BACKENDURL = process.env.NEXT_PUBLIC_APP_BACKEND_URL
+const BACKENDURL = process.env.NEXT_PUBLIC_APP_BACKEND_URL;
 
 interface AttendeeInterface {
-  _id: string
-  name: string
-  email: string
-  university: string
-  photoUrl: string
-  regular_fee: 1
-  early_bird_fee: number
-  payment_status: boolean
-  currency: string
-  category: string
-  val_id: string
+  _id: string;
+  name: string;
+  email: string;
+  university: string;
+  photoUrl: string;
+  regular_fee: 1;
+  early_bird_fee: number;
+  payment_status: boolean;
+  currency: string;
+  category: string;
+  val_id: string;
 }
 
-const earlyBirdDeadline = new Date("2025-03-25T23:59:59Z")
-const regularDeadline = new Date("2025-04-10T23:59:59Z")
+const earlyBirdDeadline = new Date("2025-03-25T23:59:59Z");
+const regularDeadline = new Date("2025-04-10T23:59:59Z");
 
 export default function SoloAttendee({ params }: { params: { id: string } }) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [attendee, setAttendee] = useState<AttendeeInterface | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [paymentLoading, setPaymentLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [billAmount, setBillAmount] = useState<number>(0)
-  const currentDate = new Date()
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [attendee, setAttendee] = useState<AttendeeInterface | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [billAmount, setBillAmount] = useState<number>(0);
+  const currentDate = new Date();
 
   // Check if we're returning from payment
-  const fromPayment = searchParams.get("from") === "payment"
+  const fromPayment = searchParams.get("from") === "payment";
 
   const fetchAttendeeData = useCallback(async () => {
     try {
-      const response = await axios.get(`${BACKENDURL}/registration/${params.id}`)
-      const attendeeData: AttendeeInterface = response.data
+      const response = await axios.get(
+        `${BACKENDURL}/registration/${params.id}`
+      );
+      const attendeeData: AttendeeInterface = response.data;
 
       // Determine the fee based on the current date
       if (currentDate <= earlyBirdDeadline) {
-        setBillAmount(attendeeData.early_bird_fee)
+        setBillAmount(attendeeData.early_bird_fee);
       } else {
-        setBillAmount(attendeeData.regular_fee)
+        setBillAmount(attendeeData.regular_fee);
       }
 
-      setAttendee(attendeeData)
-      setLoading(false)
+      setAttendee(attendeeData);
+      setLoading(false);
     } catch (error: any) {
-      setError(error.message)
-      setLoading(false)
+      setError(error.message);
+      setLoading(false);
     }
-  }, [params.id, currentDate])
+  }, [params.id, currentDate]);
 
   useEffect(() => {
-    fetchAttendeeData()
+    fetchAttendeeData();
 
     // If we're returning from payment, refresh the data every few seconds
     // to check if the payment status has been updated
-    let intervalId: NodeJS.Timeout | null = null
+    let intervalId: NodeJS.Timeout | null = null;
 
     if (fromPayment) {
       intervalId = setInterval(() => {
-        fetchAttendeeData()
-      }, 3000) // Check every 3 seconds
+        fetchAttendeeData();
+      }, 3000); // Check every 3 seconds
 
       // Stop checking after 30 seconds
       setTimeout(() => {
-        if (intervalId) clearInterval(intervalId)
-      }, 30000)
+        if (intervalId) clearInterval(intervalId);
+      }, 30000);
     }
 
     return () => {
-      if (intervalId) clearInterval(intervalId)
-    }
-  }, [])
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, []);
 
   const handlePayment = async () => {
-    if (!attendee) return
+    if (!attendee) return;
 
-    setPaymentLoading(true)
+    setPaymentLoading(true);
     try {
       // Directly initiate payment from here
-      const response = await axios.get(`${BACKENDURL}/payment/pay/${params.id}`,
-      )
+      const response = await axios.get(
+        `${BACKENDURL}/payment/pay/${params.id}`
+      );
 
       if (response.data.url) {
         // Redirect to the payment gateway URL
-        window.location.href = response.data.url
+        window.location.href = response.data.url;
       } else {
-        setError("Failed to initiate payment")
-        setPaymentLoading(false)
+        setError("Failed to initiate payment");
+        setPaymentLoading(false);
       }
     } catch (error: any) {
-      setError(error.response?.data?.error || error.message)
-      setPaymentLoading(false)
+      setError(error.response?.data?.error || error.message);
+      setPaymentLoading(false);
     }
-  }
+  };
 
   if (loading)
     return (
-      <div role="status" className="flex flex-col justify-center items-center h-screen">
-        <LoaderCircle className="animate-spin" size={45} />
+      <div className="flex flex-col justify-center items-center w-full min-h-screen p-4">
+        <div className="w-full max-w-md bg-white rounded-lg shadow-sm p-6">
+          <div className="animate-pulse flex flex-col items-center">
+            {/* Avatar skeleton */}
+            <div className="rounded-full bg-gray-300 h-32 w-32 md:h-40 md:w-40 mb-4"></div>
+
+            {/* Name skeleton */}
+            <div className="h-8 bg-gray-300 rounded w-3/4 mb-4"></div>
+
+            {/* Email skeleton */}
+            <div className="h-6 bg-gray-300 rounded w-5/6 mb-3"></div>
+
+            {/* University skeleton */}
+            <div className="h-6 bg-gray-300 rounded w-4/6 mb-3"></div>
+
+            {/* Payment status skeleton */}
+            <div className="h-6 bg-gray-300 rounded w-3/6 mb-6"></div>
+
+            {/* Button skeleton */}
+            <div className="h-10 bg-gray-300 rounded w-40 mt-2"></div>
+          </div>
+        </div>
       </div>
-    )
+    );
 
-  if (error) return <p>Error: {error}</p>
-  if (!attendee) return <p>Attendee not found</p>
+  if (error) return <p>Error: {error}</p>;
+  if (!attendee) return <p>Attendee not found</p>;
 
-  const isDeadlinePassed = currentDate > regularDeadline
-  const isEarlyBird = currentDate <= earlyBirdDeadline
+  const isDeadlinePassed = currentDate > regularDeadline;
+  const isEarlyBird = currentDate <= earlyBirdDeadline;
 
   return (
     <main className="flex flex-col min-h-screen">
@@ -140,7 +163,9 @@ export default function SoloAttendee({ params }: { params: { id: string } }) {
           />
           <h2 className="md:text-4xl text-3xl font-bold">{attendee.name}</h2>
           <p className="md:text-2xl text-xl">Email: {attendee.email}</p>
-          <p className="md:text-2xl text-xl">University: {attendee.university}</p>
+          <p className="md:text-2xl text-xl">
+            University: {attendee.university}
+          </p>
           <p className="md:text-2xl text-xl">
             Payment Status:{" "}
             {attendee.payment_status ? (
@@ -151,7 +176,11 @@ export default function SoloAttendee({ params }: { params: { id: string } }) {
           </p>
           {!attendee.payment_status && !isDeadlinePassed && (
             <div className="mt-6 flex flex-col items-center">
-              {isEarlyBird && <p className="text-green-600 font-medium mb-2">Early bird price available!</p>}
+              {isEarlyBird && (
+                <p className="text-green-600 font-medium mb-2">
+                  Early bird price available!
+                </p>
+              )}
               <button
                 onClick={handlePayment}
                 disabled={paymentLoading}
@@ -171,7 +200,8 @@ export default function SoloAttendee({ params }: { params: { id: string } }) {
           {isDeadlinePassed && !attendee.payment_status && (
             <div className="mt-6 flex flex-col items-center">
               <p className="text-yellow-600 font-medium">
-                Registration is currently closed. Please contact the organizers for late registration.
+                Registration is currently closed. Please contact the organizers
+                for late registration.
               </p>
             </div>
           )}
@@ -183,6 +213,5 @@ export default function SoloAttendee({ params }: { params: { id: string } }) {
       </div>
       <Footer />
     </main>
-  )
+  );
 }
-

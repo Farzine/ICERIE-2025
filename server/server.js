@@ -17,11 +17,14 @@ const importantUpdateRoutes = require('./routes/importantUpdateRoutes');
 const ScheduleRoutes = require('./routes/ScheduleRoute');
 const sessionListRoutes = require('./routes/sessionListRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const paperRoutes = require("./routes/paperRoutes");
+const regRouter = require('./routes/registration');
+
 const frontUrl = process.env.NEXT_PUBLIC_APP_FRONTEND_URL;
 
 const { MONGO_URI } = require('./config/config');
 const { initializeAdmin } = require('./models/admin');
-const regRouter = require('./routes/registration');
+
 
 const corsOptions ={
   origin:`${frontUrl}`, 
@@ -54,7 +57,8 @@ app.use('/important-updates', importantUpdateRoutes);
 app.use('/schedule',ScheduleRoutes);
 app.use('/sessionList',sessionListRoutes);
 app.use('/sponsors', sponsorRoutes);
-app.use('/payment',paymentRoutes);
+app.use('/payments',paymentRoutes);
+app.use("/papers", paperRoutes);
 
 app.get('/', (req, res) => {
   res.send('Welcome to ARCES_2024');

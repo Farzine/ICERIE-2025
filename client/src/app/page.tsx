@@ -76,7 +76,7 @@ export default function Home() {
           {/* Message Section */}
 
           <MessageCard />
-
+          
           <Notices />
         </div>
       </div>

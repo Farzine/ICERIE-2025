@@ -32,7 +32,7 @@ export default function PaymentSuccess({ params }: { params: { params: string[] 
         // Wait a moment to allow the IPN to process
         await new Promise((resolve) => setTimeout(resolve, 3000))
 
-        const response = await axios.get(`${BACKENDURL}/payment/status/${attendeeId}`)
+        const response = await axios.get(`${BACKENDURL}/payments/status/${attendeeId}`)
         setPaymentStatus(response.data)
         setLoading(false)
       } catch (error: any) {

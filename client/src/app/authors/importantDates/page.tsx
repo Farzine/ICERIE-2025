@@ -77,7 +77,23 @@ const ImportantDates: React.FC = () => {
                   <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 md:w-6 md:h-6 md:bg-gray-400 rounded-full border-4 md:border-white"></div>
                 </div>
               ))}
-              {isLoading && <div>Loading...</div>}
+            {isLoading && (
+              <>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, index) => (
+                  <div key={`skeleton-${index}`} className="relative py-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+                      <div className="p-6 bg-gray-200 border-2 h-20 animate-pulse rounded"></div>
+                      <div className="p-6 bg-gray-200 border-2 h-20 animate-pulse rounded"></div>
+                    </div>
+                    {index !== 2 && (
+                      <div className="absolute md:left-1/2 top-full w-full h-1 md:w-px md:h-10 bg-gray-300"></div>
+                    )}
+                    <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 md:w-6 md:h-6 md:bg-gray-300 rounded-full"></div>
+                  </div>
+                ))}
+              </>
+            )}
+            {error && <div className="p-6 text-center text-red-500 text-xl">{error}</div>}
             </div>
         </div>
       </div>

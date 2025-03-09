@@ -58,6 +58,28 @@ const Submission: React.FC = () => {
               </p>
             </div>
           </div>
+
+
+          <div className="mb-16">
+  <div className="bg-gray-100 p-6 md:p-8 rounded-md shadow-md mx-4 md:mx-20">
+    <h2 className="text-2xl md:text-3xl font-semibold text-red-500 mb-4 underline">
+      Poster Submission Guideline
+    </h2>
+    <p className="mb-4 text-xl md:text-2xl">
+      Posters must be <strong>A0 size (36 × 48 inches)</strong> in <strong>portrait orientation</strong>. Content should be <strong>clear, concise, and visually engaging</strong>, following the provided template. Ensure readability with appropriate font sizes and high-quality visuals. 
+      Presenters must set up posters <strong>30 minutes before the session</strong> and be available for a <strong>3-5 minute overview</strong> followed by Q&A.
+    </p>
+    <p className="text-xl md:text-2xl">
+      Download the <a href="/doc/Poster template, ICERIE 2025.pptx " className="text-blue-600 hover:underline">Poster Template (.pptx)</a>.
+    </p>
+    <p className="text-xl md:text-2xl">
+      Download the <a href="/doc/Poster Preparation Guideline, ICERIE 2025.docx" className="text-blue-600 hover:underline">Poster Preparation Guideline (.docx)</a>.
+    </p>
+  </div>
+</div>
+
+
+
           <div className="pb-40"></div>
         </div>
       </main>

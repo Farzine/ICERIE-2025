@@ -43,17 +43,25 @@ export default function Home() {
           <div className="text-black text-lg lg:text-xl mt-4 lg:mt-2">
             <p className="text-red-600 text-4xl my-10  font-semibold">
               24-26th April 2025
-            </p>{" "}
-            <p className="text-xl hover:text-red-600 hover:border-red-600 flex justify-center items-center my-3 border rounded-md p-2 md:text-2xl">
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 my-5">
               <a
                 href="/doc/Flyer_ICERIE 2025_SUST.pdf"
-                className=" font-semibold  mx-2"
+                className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md hover:border-red-600 hover:text-red-600 hover:bg-gray-50 transition-colors duration-300 group"
                 download
               >
-                Download Brochure
+                <span className="font-semibold mr-2 text-base md:text-lg">Download Brochure</span>
+                <TfiDownload className="text-sm md:text-base group-hover:animate-bounce" />
               </a>
-              <TfiDownload className=" font-semibold " />
-            </p>
+              <a
+                href="/doc/Poster template, ICERIE 2025.pptx"
+                className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md hover:border-red-600 hover:text-red-600 hover:bg-gray-50 transition-colors duration-300 group"
+                download
+              >
+                <span className="font-semibold mr-2 text-base md:text-lg">Poster Template</span>
+                <TfiDownload className="text-sm md:text-base group-hover:animate-bounce" />
+              </a>
+            </div>
             <p className="text-xl">
               University Ave, Sylhet 3114 <br />
               Shahjalal University of Science and Technology

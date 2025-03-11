@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "@/components/NavBar";
@@ -15,29 +15,33 @@ interface Paper {
   presentationType: string;
   payment_status: boolean;
   transaction_id: string | null;
+  val_id?: string 
 }
 
 interface Attendee {
+  _id: string;
   name: string;
   email: string;
-  phone: string;
-  category: string;
-  university: string;
-  photoUrl: string;
-  visaSupport: string;
-  tourInterested: boolean;
+  phone?: string;
+  category?: string;
+  university?: string;
+  photoUrl?: string;
+  visaSupport?: string;
+  tourInterested?: boolean;
   papers: Paper[];
 }
 
 export default function PaymentRedirectPage({
   params,
 }: {
-  params: { id: string; params?: string[] };
+  params: { id: string; paperId?: string };
 }) {
   const router = useRouter();
+  
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [attendee, setAttendee] = useState<Attendee | null>(null);
+
   const BACKENDURL = process.env.NEXT_PUBLIC_APP_BACKEND_URL;
 
   useEffect(() => {
@@ -46,7 +50,22 @@ export default function PaymentRedirectPage({
         setLoading(true);
         setError(null);
 
-        const res = await axios.get(`${BACKENDURL}/payments/status/${params.id}`);
+        // Build the endpoint:
+        // If we have a paperId, add it as a query param.
+        let endpoint = `${BACKENDURL}/payments/status/${params.id}/paper/${params.paperId}`;
+
+        console.log("Fetching payment status from:", endpoint);
+
+        // Make the request
+        const res = await axios.get(endpoint);
+        console.log("Payment status data:", res.data);
+
+        // The backend might return a single paper or multiple papers:
+        // - if you used `?paperId=XYZ`, the shape might have
+        //   top-level info + one paper’s details
+        // - if no paperId is provided, you get the same top-level info 
+        //   + a `papers` array
+
         setAttendee(res.data);
       } catch (err: any) {
         setError(
@@ -58,12 +77,14 @@ export default function PaymentRedirectPage({
       }
     };
     fetchPaymentStatus();
-  }, [params.id, BACKENDURL]);
+  }, [params.id, params.paperId, BACKENDURL]);
 
   const handleDownloadPayslip = (paperId?: string) => {
-    // You could pass paperId to the backend if needed:
-    // `${BACKENDURL}/payments/paySlip/${params.id}?paperId=${paperId}`
-    const payslipUrl = `${BACKENDURL}/payments/paySlip/${params.id}`;
+    // If you want a per-paper payslip, pass ?paperId=paperId in the URL:
+    // e.g. /payments/paySlip/:id?paperId=${paperId}
+    // If you want all paid papers in one PDF, omit the paperId param
+    let payslipUrl = `${BACKENDURL}/payments/paySlip/${params.id}/paper/${params.paperId}`;
+    
     window.open(payslipUrl, "_blank");
   };
 
@@ -73,9 +94,63 @@ export default function PaymentRedirectPage({
         <div className="fixed top-0 left-0 right-0 z-50">
           <Navbar />
         </div>
-        <div className="flex-grow flex flex-col items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500 mb-4"></div>
-          <p className="text-gray-700 font-medium">Verifying payment status...</p>
+        {/* Skeleton Loader */}
+        <div className="flex-grow pt-40 pb-8 px-4">
+          <div className="max-w-7xl mx-auto">
+            {/* Attendee Information Card Skeleton */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8 border-t-4 border-gray-300">
+              <div className="bg-gray-300 p-4 h-12 animate-pulse"></div>
+              <div className="p-6">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-6">
+            <div className="w-32 h-32 rounded-full bg-gray-300 animate-pulse"></div>
+            <div className="flex-1">
+              <div className="h-8 bg-gray-300 rounded w-3/4 mb-2 animate-pulse"></div>
+              <div className="h-6 bg-gray-300 rounded w-1/2 mb-2 animate-pulse"></div>
+              <div className="h-6 bg-gray-300 rounded w-2/3 animate-pulse"></div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i}>
+                <div className="h-4 bg-gray-300 rounded w-1/3 mb-2 animate-pulse"></div>
+                <div className="h-6 bg-gray-300 rounded w-2/3 animate-pulse"></div>
+              </div>
+            ))}
+          </div>
+              </div>
+            </div>
+
+            {/* Payment & Paper Details Skeleton */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8 border-t-4 border-gray-300">
+              <div className="bg-gray-300 p-4 h-12 animate-pulse"></div>
+              <div className="p-6">
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className="border rounded-lg overflow-hidden shadow-sm mb-6 border-gray-300">
+              <div className="p-4 flex justify-between items-center bg-gray-200">
+                <div className="h-6 bg-gray-300 rounded w-1/3 animate-pulse"></div>
+                <div className="h-6 bg-gray-300 rounded w-20 animate-pulse"></div>
+              </div>
+              <div className="p-4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[...Array(4)].map((_, j) => (
+              <div key={j}>
+                <div className="h-4 bg-gray-300 rounded w-1/3 mb-2 animate-pulse"></div>
+                <div className="h-6 bg-gray-300 rounded w-2/3 animate-pulse"></div>
+              </div>
+            ))}
+                </div>
+                <div className="h-10 bg-gray-300 rounded w-40 mt-4 animate-pulse"></div>
+              </div>
+            </div>
+          ))}
+              </div>
+            </div>
+
+            {/* Return Home Button Skeleton */}
+            <div className="flex justify-center">
+              <div className="h-10 bg-gray-300 rounded w-40 animate-pulse"></div>
+            </div>
+          </div>
         </div>
         {/* Carousel Section */}
         <div className="container mx-auto px-4 py-8 hidden">
@@ -188,8 +263,8 @@ export default function PaymentRedirectPage({
                   />
                 )}
                 <div className="flex-1">
-                  <h1 className="text-xl font-bold mb-2">{attendee.name}</h1>
-                  <div className="text-sm text-gray-600">
+                  <h1 className="text-2xl font-bold mb-2">{attendee.name}</h1>
+                  <div className="text-xl text-gray-600">
                     <p>{attendee.category}</p>
                     <p>{attendee.university}</p>
                   </div>
@@ -273,7 +348,7 @@ export default function PaymentRedirectPage({
                             Paper #{index + 1}: {paper.paperId}
                           </h3>
                           <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${
+                            className={`font-semibold px-2.5 py-0.5 rounded-md text-xl ${
                               isPaid
                                 ? "bg-green-500 text-white"
                                 : "bg-yellow-500 text-white"

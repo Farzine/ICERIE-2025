@@ -1,216 +1,564 @@
 "use client";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/NavBar";
-import Carousel from "@/js";
+
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { LoaderCircle } from "lucide-react";
-import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import Navbar from "@/components/NavBar";
+import Footer from "@/components/Footer";
+import Carousel from "@/js";
 
-const BACKENDURL = process.env.NEXT_PUBLIC_APP_BACKEND_URL;
+// ------------------ Interfaces ------------------
+interface Paper {
+  paperId: string;
+  track: string;
+  proceedingsPublication: string;
+  fullPaperPublication: string;
+  presentationType: string;
+  payment_status: boolean;
+  transaction_id?: string;
+  val_id?: string;
+}
 
-interface AttendeeInterface {
+interface Attendee {
   _id: string;
   name: string;
   email: string;
-  university: string;
-  photoUrl: string;
-  regular_fee: 1;
-  early_bird_fee: number;
-  payment_status: boolean;
-  currency: string;
-  category: string;
-  val_id: string;
+  phone?: string;
+  category?: string;
+  university?: string;
+  photoUrl?: string;
+  visaSupport?: string;
+  tourInterested?: boolean;
+  papers: Paper[];
 }
 
-const earlyBirdDeadline = new Date("2025-03-25T23:59:59Z");
-const regularDeadline = new Date("2025-04-10T23:59:59Z");
-
-export default function SoloAttendee({ params }: { params: { id: string } }) {
+// ------------------ Main Component ------------------
+export default function ProfessionalProfilePage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [attendee, setAttendee] = useState<AttendeeInterface | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [paymentLoading, setPaymentLoading] = useState(false);
+
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [billAmount, setBillAmount] = useState<number>(0);
-  const currentDate = new Date();
+  const [attendee, setAttendee] = useState<Attendee | null>(null);
 
-  // Check if we're returning from payment
-  const fromPayment = searchParams.get("from") === "payment";
+  // For tabs
+  const [selectedTab, setSelectedTab] = useState<"profile" | "papers">("profile");
 
-  const fetchAttendeeData = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        `${BACKENDURL}/registration/${params.id}`
-      );
-      const attendeeData: AttendeeInterface = response.data;
+  const BACKENDURL = process.env.NEXT_PUBLIC_APP_BACKEND_URL;
 
-      // Determine the fee based on the current date
-      if (currentDate <= earlyBirdDeadline) {
-        setBillAmount(attendeeData.early_bird_fee);
-      } else {
-        setBillAmount(attendeeData.regular_fee);
-      }
-
-      setAttendee(attendeeData);
-      setLoading(false);
-    } catch (error: any) {
-      setError(error.message);
-      setLoading(false);
-    }
-  }, [params.id, currentDate]);
-
+  // ------------------ Fetch Attendee Data ------------------
   useEffect(() => {
-    fetchAttendeeData();
+    const fetchAttendee = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-    // If we're returning from payment, refresh the data every few seconds
-    // to check if the payment status has been updated
-    let intervalId: NodeJS.Timeout | null = null;
+        // GET /registration/:id
+        const endpoint = `${BACKENDURL}/registration/${params.id}`;
+        console.log("Fetching attendee data from:", endpoint);
 
-    if (fromPayment) {
-      intervalId = setInterval(() => {
-        fetchAttendeeData();
-      }, 3000); // Check every 3 seconds
-
-      // Stop checking after 30 seconds
-      setTimeout(() => {
-        if (intervalId) clearInterval(intervalId);
-      }, 30000);
-    }
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, []);
-
-  const handlePayment = async () => {
-    if (!attendee) return;
-
-    setPaymentLoading(true);
-    try {
-      // Directly initiate payment from here
-      const response = await axios.get(
-        `${BACKENDURL}/payment/pay/${params.id}`
-      );
-
-      if (response.data.url) {
-        // Redirect to the payment gateway URL
-        window.location.href = response.data.url;
-      } else {
-        setError("Failed to initiate payment");
-        setPaymentLoading(false);
+        const res = await axios.get(endpoint);
+        setAttendee(res.data);
+      } catch (err: any) {
+        setError(
+          err.response?.data?.error ||
+            "Failed to fetch attendee data. Please try again later."
+        );
+      } finally {
+        setLoading(false);
       }
-    } catch (error: any) {
-      setError(error.response?.data?.error || error.message);
-      setPaymentLoading(false);
+    };
+
+    fetchAttendee();
+  }, [params.id, BACKENDURL]);
+
+
+  // Pay for a single paper
+  const handlePayForPaper = async (paperId: string) => {
+    if (!attendee) return;
+    try {
+      const paperKey = paperId;
+      const res = await axios.post(
+        `${BACKENDURL}/payments/${params.id}/paper/${paperKey}`
+      );
+      if (res.data.url) {
+        window.location.href = res.data.url;
+      } else {
+        alert("Payment URL not found");
+      }
+    } catch (err: any) {
+      alert("Failed to initiate payment: " + err.message);
     }
   };
 
-  if (loading)
+  // Delete an unpaid paper
+  const handleDeletePaper = async (paperId: string) => {
+    if (!attendee) return;
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete paper "${paperId}"?`
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const paperKey = paperId;
+      const res = await axios.delete(
+        `${BACKENDURL}/papers/${params.id}/paper/${paperKey}`
+      );
+      if (res.data.attendee) {
+        setAttendee(res.data.attendee);
+      }
+    } catch (err: any) {
+      alert("Failed to delete paper: " + err.message);
+    }
+  };
+
+
+  // ------------------ Download Payslip ------------------
+  const handleDownloadPayslip = (paperId?: string) => {
+    // Construct the URL with query param:
+    const payslipUrl = `${BACKENDURL}/payments/paySlip/${params.id}?paperId=${paperId}`;
+    window.open(payslipUrl, "_blank");
+  };
+
+  // ------------------ Rendering Logic ------------------
+  if (loading) {
     return (
-      <div className="flex flex-col justify-center items-center w-full min-h-screen p-4">
-        <div className="w-full max-w-md bg-white rounded-lg shadow-sm p-6">
-          <div className="animate-pulse flex flex-col items-center">
-            {/* Avatar skeleton */}
-            <div className="rounded-full bg-gray-300 h-32 w-32 md:h-40 md:w-40 mb-4"></div>
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <Navbar />
+        </div>
+        {/* --- Skeleton / Loading State --- */}
+        <div className="flex-grow pt-28 md:pt-32 pb-8 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
+            {/* Profile Tab Navigation Skeleton */}
+            <div className="flex justify-center mb-8">
+              <div className="h-10 bg-gray-200 rounded-full w-64 animate-pulse"></div>
+            </div>
+            
+            {/* Attendee Information Card Skeleton */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8 border-t-4 border">
+              <div className="bg-gray-200 p-4 h-14 animate-pulse"></div>
+              <div className="p-6">
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
+                  <div className="w-36 h-36 rounded-full bg-gray-200 animate-pulse"></div>
+                  <div className="flex-1">
+                    <div className="h-8 bg-gray-200 rounded w-3/4 mb-3 animate-pulse"></div>
+                    <div className="h-6 bg-gray-200 rounded w-1/2 mb-3 animate-pulse"></div>
+                    <div className="h-6 bg-gray-200 rounded w-2/3 animate-pulse"></div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="flex">
+                      <div className="h-5 bg-gray-200 rounded w-1/4 mr-4 animate-pulse"></div>
+                      <div className="h-5 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
 
-            {/* Name skeleton */}
-            <div className="h-8 bg-gray-300 rounded w-3/4 mb-4"></div>
+            {/* Return Home Button Skeleton */}
+            <div className="flex justify-center mt-8">
+              <div className="h-10 bg-gray-200 rounded-md w-40 animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-8 hidden">
+          <Carousel />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
-            {/* Email skeleton */}
-            <div className="h-6 bg-gray-300 rounded w-5/6 mb-3"></div>
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <Navbar />
+        </div>
+        <div className="flex-grow flex flex-col items-center justify-center px-4">
+          <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full border-t-4 border-red-500">
+            <div className="flex items-center justify-center mb-6">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 text-red-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-center mb-4">Error</h2>
+            <p className="text-gray-700 text-center mb-8">{error}</p>
+            <div className="flex justify-center">
+              <button
+                onClick={() => router.push("/")}
+                className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+              >
+                Return to Home
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-8 hidden">
+          <Carousel />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
-            {/* University skeleton */}
-            <div className="h-6 bg-gray-300 rounded w-4/6 mb-3"></div>
+  if (!attendee) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <Navbar />
+        </div>
+        <div className="flex-grow flex flex-col items-center justify-center px-4">
+          <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full border-t-4 border-red-500">
+            <h2 className="text-2xl font-bold text-center mb-4">No Data Found</h2>
+            <p className="text-gray-700 text-center mb-8">
+              Unable to retrieve your information. Please try again later.
+            </p>
+            <div className="flex justify-center">
+              <button
+                onClick={() => router.push("/")}
+                className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+              >
+                Return to Home
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-8 hidden">
+          <Carousel />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
-            {/* Payment status skeleton */}
-            <div className="h-6 bg-gray-300 rounded w-3/6 mb-6"></div>
+  // ------------------ TABS Content ------------------
+  const renderProfileTab = () => (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-red-500 transition-all duration-300">
+      <div className="bg-red-500 p-5 text-white">
+        <h2 className="text-xl font-semibold">Profile Information</h2>
+      </div>
+      <div className="p-6 md:p-8">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
+          {attendee.photoUrl ? (
+            <img
+              src={attendee.photoUrl}
+              alt={`${attendee.name}'s Photo`}
+              className="w-36 h-36 object-cover rounded-full border-2 border-gray-200 shadow-sm"
+            />
+          ) : (
+            <div className="w-36 h-36 rounded-full bg-gray-100 flex items-center justify-center border-2 border-gray-200">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-20 w-20 text-gray-400" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={1} 
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" 
+                />
+              </svg>
+            </div>
+          )}
+          <div className="flex-1 text-center md:text-left">
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">{attendee.name}</h1>
+            <div className="text-xl text-gray-600 space-y-1">
+              {attendee.category && (
+                <p className="font-semibold">{attendee.category}</p>
+              )}
+              {attendee.university && (
+                <p>{attendee.university}</p>
+              )}
+            </div>
+          </div>
+        </div>
 
-            {/* Button skeleton */}
-            <div className="h-10 bg-gray-300 rounded w-40 mt-2"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 mt-6">
+          <div className="flex items-baseline">
+            <span className="font-semibold text-gray-800 w-28">Email:</span>
+            <span className="text-gray-600">{attendee.email}</span>
+          </div>
+          {attendee.phone && (
+            <div className="flex items-baseline">
+              <span className="font-semibold text-gray-800 w-28">Phone:</span>
+              <span className="text-gray-600">{attendee.phone}</span>
+            </div>
+          )}
+          {attendee.visaSupport && (
+            <div className="">
+              <span className="font-semibold text-gray-800 w-28">Visa-Support:</span>
+              <span className="text-gray-600 ml-6">{attendee.visaSupport}</span>
+            </div>
+          )}
+          <div className="">
+            <span className="font-semibold text-gray-800 w-28">Tour Interest:</span>
+            <span className="text-gray-600 ml-6">
+              {attendee.tourInterested ? "Yes" : "No"}
+            </span>
           </div>
         </div>
       </div>
-    );
+    </div>
+  );
 
-  if (error) return <p>Error: {error}</p>;
-  if (!attendee) return <p>Attendee not found</p>;
+  const renderPapersTab = () => (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-red-500 transition-all duration-300">
+      <div className="bg-red-500 p-5 text-white">
+        <h2 className="text-xl font-semibold">Papers & Payment Details</h2>
+      </div>
+      <div className="p-6 md:p-8">
+        {attendee.papers.length === 0 ? (
+          <div className="text-center py-8">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-16 w-16 mx-auto text-gray-300 mb-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <p className="text-gray-500 text-lg">No papers submitted</p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {attendee.papers.map((paper, index) => {
+              const isPaid = paper.payment_status === true;
+              return (
+                <div
+                  key={paper.paperId}
+                  className={`border rounded-lg overflow-hidden shadow-sm transition-all duration-300 ${
+                    isPaid
+                      ? "border-green-200 bg-green-50"
+                      : "border-gray-200 bg-white"
+                  }`}
+                >
+                  <div
+                    className={`p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center ${
+                      isPaid ? "bg-green-100" : "bg-gray-50"
+                    }`}
+                  >
+                    <h3 className="font-bold text-gray-800 mb-2 sm:mb-0">
+                      Paper #{index + 1}: <span className="font-mono">{paper.paperId}</span>
+                    </h3>
+                    <span
+                      className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-medium ${
+                        isPaid
+                          ? "bg-green-500 text-white"
+                          : "bg-yellow-500 text-white"
+                      }`}
+                    >
+                      {isPaid ? "Paid" : "Unpaid"}
+                    </span>
+                  </div>
 
-  const isDeadlinePassed = currentDate > regularDeadline;
-  const isEarlyBird = currentDate <= earlyBirdDeadline;
+                  <div className="p-5 space-y-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+                      <div>
+                        <div className="font-medium text-gray-800 mb-1">Track:</div>
+                        <div className="text-gray-600">{paper.track}</div>
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-800 mb-1">Presentation Type:</div>
+                        <div className="text-gray-600 capitalize">{paper.presentationType}</div>
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-800 mb-1">Proceedings Publication:</div>
+                        <div className="text-gray-600">{paper.proceedingsPublication}</div>
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-800 mb-1">Full Paper Publication:</div>
+                        <div className="text-gray-600">{paper.fullPaperPublication}</div>
+                      </div>
+                      {paper.val_id && (
+                        <div className="md:col-span-2">
+                          <div className="font-medium text-gray-800 mb-1">Validation ID:</div>
+                          <div className="font-mono text-gray-600 bg-gray-50 p-2 rounded border border-gray-100">
+                            {paper.val_id}
+                          </div>
+                        </div>
+                      )}
+                    </div>
 
+                    {/* Download payslip for paid papers */}
+                    {isPaid && (
+                      <button
+                        onClick={() => handleDownloadPayslip(paper.paperId)}
+                        className="inline-flex items-center px-5 py-2.5 bg-red-500 hover:bg-red-400 text-white rounded-md transition-colors duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                      >
+                        <svg
+                          className="w-5 h-5 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                        Payment Receipt
+                      </button>
+                    )}
+                    {!isPaid && (
+                      <div className="flex flex-col sm:flex-row gap-3">
+                      <button
+                        onClick={() => handlePayForPaper(paper.paperId)}
+                        className="inline-flex items-center px-5 py-2.5 bg-red-500 hover:bg-red-400 text-white rounded-md transition-colors duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                      >
+                        <svg
+                          className="w-5 h-5 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+                          />
+                        </svg>
+                        Pay Now
+                      </button>
+                      <button
+                        onClick={() => handleDeletePaper(paper.paperId)}
+                        className="inline-flex items-center px-5 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 focus:ring-2 focus:ring-red-300 transition-colors shadow-sm"
+                      >
+                        <svg
+                        className="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                        </svg>
+                        Delete
+                      </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  // ------------------ Final JSX ------------------
   return (
-    <main className="flex flex-col min-h-screen">
+    <main className="flex flex-col min-h-screen bg-gray-50">
+      {/* Navbar */}
       <div className="fixed top-0 left-0 right-0 z-50">
         <Navbar />
       </div>
-      <div className="flex flex-grow flex-col justify-center items-center p-4">
-        <div className="flex flex-col items-center bg-white p-6 rounded-lg shadow-md w-full md:w-1/2">
-          {fromPayment && attendee.payment_status && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 w-full text-center">
-              Your payment has been successfully processed!
-            </div>
-          )}
 
-          <Image
-            src={attendee.photoUrl || "/placeholder.svg"}
-            alt={`${attendee.name}'s photo`}
-            className="w-32 h-32 md:w-52 md:h-52 rounded-full mb-4"
-            width={100}
-            height={100}
-          />
-          <h2 className="md:text-4xl text-3xl font-bold">{attendee.name}</h2>
-          <p className="md:text-2xl text-xl">Email: {attendee.email}</p>
-          <p className="md:text-2xl text-xl">
-            University: {attendee.university}
-          </p>
-          <p className="md:text-2xl text-xl">
-            Payment Status:{" "}
-            {attendee.payment_status ? (
-              <span className="text-green-500 font-semibold">Paid</span>
-            ) : (
-              <span className="text-red-500 font-semibold">Not Paid</span>
-            )}
-          </p>
-          {!attendee.payment_status && !isDeadlinePassed && (
-            <div className="mt-6 flex flex-col items-center">
-              {isEarlyBird && (
-                <p className="text-green-600 font-medium mb-2">
-                  Early bird price available!
-                </p>
-              )}
+      <div className="flex-grow pt-32 md:pt-36 pb-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
+          {/* ------------------ Page Title ------------------ */}
+          <h1 className="text-3xl md:text-3xl font-bold text-center text-gray-800 mb-8">
+            Attendee Dashboard
+          </h1>
+          
+          {/* ------------------ Tab Buttons ------------------ */}
+          <div className="flex justify-center mb-8">
+            <div className="bg-white rounded-full shadow-sm p-1 inline-flex">
               <button
-                onClick={handlePayment}
-                disabled={paymentLoading}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-semibold disabled:bg-blue-400"
+                onClick={() => setSelectedTab("profile")}
+                className={`py-2 px-6 text-xl font-bold rounded-full transition-all duration-300 ${
+                  selectedTab === "profile"
+                    ? "bg-red-500 text-white shadow-sm"
+                    : "text-gray-600 hover:text-red-500"
+                }`}
               >
-                {paymentLoading ? (
-                  <span className="flex items-center">
-                    <LoaderCircle className="animate-spin mr-2" size={20} />
-                    Processing...
-                  </span>
-                ) : (
-                  `Pay ${billAmount} ${attendee.currency}`
-                )}
+                Profile
+              </button>
+              <button
+                onClick={() => setSelectedTab("papers")}
+                className={`py-2 px-6 text-xl font-bold rounded-full transition-all duration-300 ${
+                  selectedTab === "papers"
+                    ? "bg-red-500 text-white shadow-sm"
+                    : "text-gray-600 hover:text-red-500"
+                }`}
+              >
+                Papers
               </button>
             </div>
-          )}
-          {isDeadlinePassed && !attendee.payment_status && (
-            <div className="mt-6 flex flex-col items-center">
-              <p className="text-yellow-600 font-medium">
-                Registration is currently closed. Please contact the organizers
-                for late registration.
-              </p>
-            </div>
-          )}
+          </div>
+
+          {/* ------------------ Tab Content ------------------ */}
+          <div className="transition-opacity duration-300">
+            {selectedTab === "profile" && renderProfileTab()}
+            {selectedTab === "papers" && renderPapersTab()}
+          </div>
+
+          {/* Return Home Button */}
+          <div className="text-center mt-10">
+            <button
+              onClick={() => router.push("/")}
+              className="inline-flex items-center px-6 py-3 bg-red-500 hover:bg-red-4 00 text-white rounded-md transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+            >
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              Return to Home
+            </button>
+          </div>
         </div>
       </div>
-      {/* Carousel Section */}
       <div className="container mx-auto px-4 py-8 hidden">
-        <Carousel />
-      </div>
+          <Carousel />
+        </div>
+
       <Footer />
     </main>
   );

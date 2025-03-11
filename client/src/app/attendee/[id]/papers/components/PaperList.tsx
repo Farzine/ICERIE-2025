@@ -83,7 +83,7 @@ export default function PaperList({ papers, onPayPaper, onDeletePaper }: PaperLi
               <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row justify-center lg:justify-end items-center gap-3">
                 <button
                   onClick={() => onPayPaper(paper)}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-red-500 text-white rounded-md hover:bg-red-600 focus:ring-2 focus:ring-red-300 transition-colors font-medium text-xl"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-red-500 text-white rounded-md hover:bg-red-400 focus:ring-2 focus:ring-red-300 transition-colors font-medium text-xl"
                   aria-label={`Pay now for paper ${paper.paperId}`}
                 >
                   Pay Now

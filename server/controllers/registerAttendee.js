@@ -21,15 +21,15 @@ const feeData = [
   },
   {
     category: "Foreign Delegates",
-    early_bird_fee: 350,
-    regular_fee: 450,
-    currency: "USD",
+    early_bird_fee: 43750, // 350 USD
+    regular_fee: 56250, // 450 USD
+    currency: "BDT",
   },
   {
     category: "Foreign Students",
-    early_bird_fee: 200,
-    regular_fee: 250,
-    currency: "USD",
+    early_bird_fee: 25000, // 200 USD
+    regular_fee: 31250, // 250 USD
+    currency: "BDT",
   },
 ];
 
@@ -52,7 +52,7 @@ const RegisterAttendee = async (req, res) => {
 const getAllAttendee = async (req, res) => {
   try {
     const attendees = await Attendee.find().select(
-      "_id name email university photoUrl category payment_status phone"
+      "_id name email university photoUrl category phone"
     );
     res.status(200).json(attendees);
   } catch (error) {
@@ -66,18 +66,6 @@ const getAttendeeByID = async (req, res) => {
     const attendee = await Attendee.findById(id);
     if (!attendee) {
       return res.status(404).json({ message: "Attendee not found" });
-    }
-    try {
-      const paymentValidationUrl = `https://epayment.sust.edu/api/payment/status/${attendee.val_id}`
-      console.log("Payment validation URL: ",paymentValidationUrl);
-      const payment = await axios.post(paymentValidationUrl);
-      console.log("Payment response status: ",payment.data.status);
-      if(payment.data.status == "200"){
-        console.log("Paid successfully 💸💸");
-        attendee.payment_status = true;
-      }
-    } catch (error) {
-      console.log(error);
     }
     res.status(200).json(attendee);
   } catch (error) {

@@ -1,14 +1,17 @@
-const request = require("request")
-const Attendee = require("../models/attendee")
+const request = require("request");
+const Attendee = require("../models/attendee");
 const PDFDocument = require("pdfkit");
-const dotenv = require("dotenv")
+const axios = require("axios");
+const dotenv = require("dotenv");
 const earlyBirdDeadline = new Date("2025-03-25T23:59:59Z");
 const regularDeadline = new Date("2025-04-10T23:59:59Z");
 
-dotenv.config()
+dotenv.config();
 
 exports.initiatePayment = async (req, res) => {
   const { attendeeId, paperId } = req.params;
+  console.log("AttendeeId:", attendeeId);
+  console.log("PaperId:", paperId);
 
   try {
     // 1) Find the attendee
@@ -22,7 +25,9 @@ exports.initiatePayment = async (req, res) => {
     const paper = attendee.papers.find((p) => p.paperId === paperId);
     console.log("Paper:", paper);
     if (!paper) {
-      return res.status(404).json({ error: "Paper not found for this attendee" });
+      return res
+        .status(404)
+        .json({ error: "Paper not found for this attendee" });
     }
 
     // If already paid for this paper, no need to pay again
@@ -35,12 +40,12 @@ exports.initiatePayment = async (req, res) => {
     // Calculate amount based on the current date and deadline
     const amount = (() => {
       if (currentDate <= earlyBirdDeadline) {
-      return attendee.early_bird_fee;
+        return attendee.early_bird_fee;
       } else if (currentDate <= regularDeadline) {
-      return attendee.regular_fee;
+        return attendee.regular_fee;
       } else {
-      // Instead of returning directly, we'll throw so we can catch it
-      throw new Error("Payment deadline has passed");
+        // Instead of returning directly, we'll throw so we can catch it
+        throw new Error("Payment deadline has passed");
       }
     })();
 
@@ -49,16 +54,16 @@ exports.initiatePayment = async (req, res) => {
       return res.status(400).json({ message: "Payment deadline has passed" });
     }
 
-
     // 5) The redirect URL could lead user back to front-end for that paper
-    const redirectUrl = `${process.env.NEXT_PUBLIC_APP_FRONTEND_URL}/attendee/${attendeeId}/papers`;
+    const redirectUrl = `${process.env.NEXT_PUBLIC_APP_FRONTEND_URL}/attendee/${attendeeId}/papers/${paperId}`;
 
     // 6) Prepare request to your payment gateway
     const options = {
       method: "POST",
       url: "https://epayment.sust.edu/api/payment/create/icerie",
       headers: {
-        "Content-Type": "multipart/form-data; boundary=---011000010111000001101001",
+        "Content-Type":
+          "multipart/form-data; boundary=---011000010111000001101001",
         "User-Agent": "insomnia/10.3.0",
         Authorization: `Bearer ${process.env.PAYMENT_API_KEY}`,
       },
@@ -86,7 +91,10 @@ exports.initiatePayment = async (req, res) => {
         const responseData = JSON.parse(body);
         console.log("Payment gateway response:", responseData);
 
-        if (responseData.status === "success" && responseData.data.redirectURL) {
+        if (
+          responseData.status === "success" &&
+          responseData.data.redirectURL
+        ) {
           // Store the paper's val_id
           if (responseData.data.paymentID) {
             paper.val_id = responseData.data.paymentID;
@@ -103,7 +111,9 @@ exports.initiatePayment = async (req, res) => {
         }
       } catch (parseError) {
         console.error("Error parsing payment response:", parseError, body);
-        return res.status(500).json({ error: "Invalid response from payment gateway" });
+        return res
+          .status(500)
+          .json({ error: "Invalid response from payment gateway" });
       }
     });
   } catch (error) {
@@ -111,8 +121,6 @@ exports.initiatePayment = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
 
 exports.handleIPN = async (req, res) => {
   console.log("IPN received:", req.body);
@@ -133,13 +141,15 @@ exports.handleIPN = async (req, res) => {
       attendee = await Attendee.findById(attendeeId);
     } else {
       // fallback for original approach
-        const attendeeId = reg.includes("-") ? reg.split("-")[0] : reg;
-        console.log("AttendeeId at handlePIN:", attendeeId);
-        attendee = await Attendee.findById(attendeeId);
+      const attendeeId = reg.includes("-") ? reg.split("-")[0] : reg;
+      console.log("AttendeeId at handlePIN:", attendeeId);
+      attendee = await Attendee.findById(attendeeId);
     }
 
     if (!attendee) {
-      console.error(`❌ Attendee not found for payment ID: ${paymentID}, reg: ${reg}`);
+      console.error(
+        `❌ Attendee not found for payment ID: ${paymentID}, reg: ${reg}`
+      );
       return res.status(404).json({ error: "Attendee not found" });
     }
 
@@ -152,7 +162,11 @@ exports.handleIPN = async (req, res) => {
     // If we found a paper, update the paper’s payment status and val_id
     if (paper) {
       console.log("Paper found:", paper);
-      if (status === "SUCCESS" || status === "VALID" || status === "VALIDATED") {
+      if (
+        status === "SUCCESS" ||
+        status === "VALID" ||
+        status === "VALIDATED"
+      ) {
         paper.payment_status = true;
         paper.val_id = paymentID;
         paper.transaction_id = transaction_id || null;
@@ -161,26 +175,15 @@ exports.handleIPN = async (req, res) => {
           `✅ Payment successful for Paper ${paperId}, Attendee ${attendee.name}`
         );
       } else {
-        console.log(`❌ Payment failed for Paper ${paperId}, Status: ${status}`);
+        console.log(
+          `❌ Payment failed for Paper ${paperId}, Status: ${status}`
+        );
       }
 
       return res.status(200).json({ message: "IPN received" });
-    } 
-    // else {
-    //   // Otherwise fallback to the top-level approach
-    //   if (status === "SUCCESS" || status === "VALID" || status === "VALIDATED") {
-    //     attendee.payment_status = true;
-    //     attendee.val_id = paymentID;
-    //     await attendee.save();
-    //     console.log(
-    //       `✅ Payment successful at attendee-level for ${attendee.name}, Transaction: ${transaction_id}`
-    //     );
-    //   } else {
-    //     console.log(`❌ Payment failed for ${attendee.name}, Status: ${status}`);
-    //   }
-
-    //   return res.status(200).json({ message: "IPN received" });
-    // }
+    } else {
+      return res.status(404).json({ message: "No matching paper found" });
+    }
   } catch (error) {
     console.error("Error processing IPN:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -188,63 +191,67 @@ exports.handleIPN = async (req, res) => {
 };
 
 exports.checkPaymentStatus = async (req, res) => {
-  const attendeeId = req.params.id;
-  const { paperId } = req.query; // Optional parameter to check specific paper status
-  
+  const { attendeeId, paperId } = req.params;
+  console.log("AttendeeId:", attendeeId);
+  console.log("PaperId:", paperId);
+
   try {
     const attendee = await Attendee.findById(attendeeId);
+    console.log("Attendee at checkPaymentStatus:", attendee);
     if (!attendee) return res.status(404).json({ error: "Attendee not found" });
 
-    // If paperId is provided, check status for a specific paper
-    if (paperId) {
-      const paper = attendee.papers.find((p) => p.paperId === paperId);
-      if (!paper) {
-        return res.status(404).json({ error: "Paper not found for this attendee" });
-      }
-      
-      return res.json({
-        name: attendee.name,
-        email: attendee.email,
-        track: paper.track,
-        category: attendee.category,
-        visaSupport: attendee.visaSupport,
-        phone: attendee.phone,
-        photoUrl: attendee.photoUrl,
-        university: attendee.university,
-        presentationType: paper.presentationType,
-        proceedingsPublication: paper.proceedingsPublication,
-        fullPaperPublication: paper.fullPaperPublication,
-        tourInterested: attendee.tourInterested,
-        paperId: paper.paperId,
-        payment_status: paper.payment_status ? "Paid" : "Unpaid",
-        transaction_id: paper.transaction_id || null,
-        val_id: paper.val_id || null
-      });
+    const paper = attendee.papers.find((p) => p.paperId === paperId);
+    console.log("Paper at checkPaymentStatus:", paper);
+    if (!paper) {
+      return res
+        .status(404)
+        .json({ error: "Paper not found for this attendee" });
     }
-    
-    // Otherwise return payment status for all papers
-    const paperStatuses = attendee.papers.map(paper => ({
-      paperId: paper.paperId,
-      track: paper.track,
-      payment_status: paper.payment_status ? "Paid" : "Unpaid",
-      transaction_id: paper.transaction_id || null
-    }));
 
-    res.json({
+    // 2) (Optional) Re-check payment status with the gateway
+    if (paper.val_id) {
+      try {
+        const paymentValidationUrl = `https://epayment.sust.edu/api/payment/status/${paper.val_id}`;
+        console.log("Payment validation URL:", paymentValidationUrl);
+
+        const paymentResponse = await axios.post(paymentValidationUrl);
+        // Suppose "200" indicates a valid/confirmed payment
+        if (paymentResponse.data.status === "200") {
+          console.log(`Paper ${paper.paperId} paid successfully 💸`);
+          paper.payment_status = true;
+          // Optionally update paper.transaction_id if the gateway returns it
+          paper.transaction_id =
+            paymentResponse.data.transaction_id || paper.transaction_id;
+        }
+      } catch (error) {
+        console.log("Error verifying paper:", paper.paperId, error.message);
+      }
+    }
+    // 3) Save any updates
+    await attendee.save();
+
+    return res.json({
+      _id: attendee._id,
       name: attendee.name,
       email: attendee.email,
-      papers: paperStatuses
+      phone: attendee.phone,
+      category: attendee.category,
+      university: attendee.university,
+      photoUrl: attendee.photoUrl,
+      visaSupport: attendee.visaSupport,
+      tourInterested: attendee.tourInterested,
+      // Return the entire `papers` array, now updated
+      papers: attendee.papers,
     });
   } catch (error) {
     console.error("Error fetching payment status:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
 // Add a manual payment update endpoint for testing or admin use
 exports.updatePaymentStatus = async (req, res) => {
-  const attendeeId = req.params.id;
-  const { paperId } = req.query; // Get paperId from query
+  const { attendeeId, paperId } = req.params; // Get paperId from query
 
   try {
     const attendee = await Attendee.findById(attendeeId);
@@ -252,9 +259,11 @@ exports.updatePaymentStatus = async (req, res) => {
 
     // If paperId provided, update payment for specific paper
     if (paperId) {
-      const paper = attendee.papers.find(p => p.paperId === paperId);
+      const paper = attendee.papers.find((p) => p.paperId === paperId);
       if (!paper) {
-        return res.status(404).json({ error: "Paper not found for this attendee" });
+        return res
+          .status(404)
+          .json({ error: "Paper not found for this attendee" });
       }
 
       paper.payment_status = true;
@@ -262,46 +271,31 @@ exports.updatePaymentStatus = async (req, res) => {
       paper.transaction_id = `MANUAL-${Date.now()}`;
       await attendee.save();
 
-      console.log(`✅ Payment manually marked as successful for Paper ${paperId} of ${attendee.name}`);
+      console.log(
+        `✅ Payment manually marked as successful for Paper ${paperId} of ${attendee.name}`
+      );
 
       return res.json({
         success: true,
         message: `Payment status updated for Paper ${paperId} of ${attendee.name}`,
       });
     }
-
-    // If no paperId, mark all papers as paid (for admin convenience)
-    attendee.papers.forEach(paper => {
-      paper.payment_status = true;
-      paper.transaction_id = `MANUAL-${Date.now()}-${paper.paperId}`;
-    });
-    await attendee.save();
-
-    console.log(`✅ Payment manually marked as successful for all papers of ${attendee.name}`);
-
-    res.json({
-      success: true,
-      message: `Payment status updated for all papers of ${attendee.name}`,
-    });
   } catch (error) {
     console.error("Error updating payment status:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
-
-
+};
 
 /**
  * Download a PDF payslip for the given attendee (and optionally a specific paper).
- * Example GET /payment/paySlip/:id?paperId=123
+ * Example GET /payment/paySlip/:id/paper/:paperId
  */
 exports.downloadPaySlip = async (req, res) => {
   try {
-    const id = req.params.id;
-    const { paperId } = req.query;  // if you want a single paper's slip
+    const { attendeeId, paperId } = req.params; // If you want a single paper's slip
 
     // 1) Find the attendee
-    const attendee = await Attendee.findById(id);
+    const attendee = await Attendee.findById(attendeeId);
     if (!attendee) {
       return res.status(404).json({ error: "Attendee not found" });
     }
@@ -311,35 +305,40 @@ exports.downloadPaySlip = async (req, res) => {
     if (paperId) {
       paper = attendee.papers.find((p) => p.paperId === paperId);
       if (!paper) {
-        return res.status(404).json({ error: "Paper not found for this attendee" });
+        return res
+          .status(404)
+          .json({ error: "Paper not found for this attendee" });
       }
-      
+
       // Only allow generating receipts for paid papers
       if (!paper.payment_status) {
-        return res.status(400).json({ error: "Cannot generate receipt for unpaid paper" });
+        return res
+          .status(400)
+          .json({ error: "Cannot generate receipt for unpaid paper" });
       }
     }
 
-    // 3) Create a PDF Document
+    // 3) Create a new PDF document
     const doc = new PDFDocument({ size: "A4", margin: 50 });
 
-    // 4) Set response headers for download
+    // 4) Set response headers to trigger a download
+    const filename = `payslip_${attendeeId}${paperId ? "_" + paperId : ""}.pdf`;
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="payslip_${id}${paperId ? "_" + paperId : ""}.pdf"`
+      `attachment; filename="${filename}"`
     );
     res.setHeader("Content-Type", "application/pdf");
 
-    // Pipe PDF to response
+    // Pipe PDF data to the response
     doc.pipe(res);
 
-    // 5) Add some styling and header
+    // 5) Add a title and some styling
     doc
       .fontSize(18)
       .text("ICERIE 2025 Conference - Payment Receipt", { align: "center" })
       .moveDown();
 
-    // 6) Add Attendee Info
+    // 6) Add attendee info
     doc
       .fontSize(12)
       .text(`Name: ${attendee.name}`)
@@ -348,7 +347,7 @@ exports.downloadPaySlip = async (req, res) => {
       .text(`Category: ${attendee.category || "Not specified"}`)
       .moveDown();
 
-    // 7) If it's a per-paper slip, show details for that paper
+    // 7) If it's a single-paper slip, show details about that paper
     if (paper) {
       doc
         .fontSize(14)
@@ -357,8 +356,8 @@ exports.downloadPaySlip = async (req, res) => {
 
       doc.fontSize(12).text(`Paper ID: ${paper.paperId}`);
       doc.text(`Track: ${paper.track}`);
-      
-      // Only include these fields if they exist in the paper object
+
+      // Only include these fields if they exist
       if (paper.proceedingsPublication !== undefined) {
         doc.text(`Proceedings Publication: ${paper.proceedingsPublication}`);
       }
@@ -370,6 +369,7 @@ exports.downloadPaySlip = async (req, res) => {
       }
       doc.moveDown();
 
+      // Payment details
       doc.text(`Payment Status: Paid`);
       if (paper.transaction_id) {
         doc.text(`Transaction ID: ${paper.transaction_id}`);
@@ -377,28 +377,24 @@ exports.downloadPaySlip = async (req, res) => {
       if (paper.val_id) {
         doc.text(`Payment Reference (val_id): ${paper.val_id}`);
       }
-      
-      // Calculate the fee based on when payment was made
-      const fee = paper.payment_date && new Date(paper.payment_date) <= earlyBirdDeadline ? 
-        attendee.early_bird_fee : attendee.regular_fee;
-      
-      doc.text(`Amount Paid: ${fee} BDT`);
-      doc.text(`Payment Date: ${paper.payment_date || "Unknown"}`);
+
+      // You could also display `payment_date` or other fields if you have them
+      // doc.text(`Payment Date: ${paper.payment_date || "Unknown"}`);
 
     } else {
-      // 8) Otherwise, show a summary of all paid papers
+      // 8) If no paperId, show a summary of all paid papers
       doc
         .fontSize(14)
         .text("Papers Payment Summary:", { underline: true })
         .moveDown(0.5);
 
-      const paidPapers = attendee.papers.filter(p => p.payment_status);
-      
+      const paidPapers = attendee.papers.filter((p) => p.payment_status);
+
       if (paidPapers.length === 0) {
         doc.fontSize(12).text("No paid papers found for this attendee.");
       } else {
         paidPapers.forEach((paper, i) => {
-          doc.fontSize(12).text(`Paper ${i + 1}: `);
+          doc.fontSize(12).text(`Paper ${i + 1}:`);
           doc.text(`   Paper ID: ${paper.paperId}`);
           doc.text(`   Track: ${paper.track}`);
           if (paper.transaction_id) {
@@ -412,20 +408,18 @@ exports.downloadPaySlip = async (req, res) => {
       }
     }
 
-    // 9) Add final note with date
+    // 9) Closing note
     doc.moveDown();
     doc.text(
-      "Thank you for your payment. We look forward to your participation in the conference!",
+      "Thank you for your payment. We look forward to your participation!",
       { italic: true }
     );
-    
     doc.moveDown();
     doc.text(`Receipt generated on: ${new Date().toLocaleDateString()}`);
 
-    // 10) Finalize the PDF
+    // 10) Finalize the PDF and end the response
     doc.end();
-
-    // The PDF will stream to the client as a download
+    // The PDF data will stream to the client, prompting a file download
   } catch (error) {
     console.error("Error generating payslip PDF:", error);
     res.status(500).json({ error: "Could not generate PDF" });

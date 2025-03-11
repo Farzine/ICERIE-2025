@@ -173,7 +173,7 @@ const Navbar = () => {
               <li key={index} className="relative">
                 {link.name === "Register" ? (
                   <button
-                    className={`bg-red-500 text-white px-5 py-2 text-2xl font-semibold rounded-full hover:bg-red-600 flex justify-between items-center mx-5 ${
+                    className={`bg-red-500 text-white px-5 py-2 text-2xl font-semibold rounded-full hover:bg-red-400 flex justify-between items-center mx-5 ${
                       state.activeLink === link.href && "bg-red-600"
                     }`}
                     onClick={() => handleNavigation(link.href ?? "")}

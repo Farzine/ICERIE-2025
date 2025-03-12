@@ -118,9 +118,7 @@ export default function ProfessionalProfilePage({
 
   // ------------------ Download Payslip ------------------
   const handleDownloadPayslip = (paperId?: string) => {
-    // Construct the URL with query param:
-    const payslipUrl = `${BACKENDURL}/payments/paySlip/${params.id}?paperId=${paperId}`;
-    window.open(payslipUrl, "_blank");
+    // Robin ata tr kaj
   };
 
   // ------------------ Rendering Logic ------------------
@@ -405,6 +403,80 @@ export default function ProfessionalProfilePage({
                         </div>
                       )}
                     </div>
+                    {/* Payment Amount Information */}
+                    {!isPaid && (
+                      <div className="bg-gray-50 p-4 rounded-md border border-gray-200 mb-4">
+                        <h4 className="font-semibold text-gray-800 mb-2">Payment Information:</h4>
+                        <div className="space-y-2">
+                          {(() => {
+                            const earlyBirdDeadline = new Date("2025-03-25T23:59:59Z");
+                            const regularDeadline = new Date("2025-04-10T23:59:59Z");
+                            const currentDate = new Date();
+                            
+                            // Get fee structure based on attendee category
+                            const getFeeStructure = () => {
+                              switch (attendee.category) {
+                                case "Local Delegates (Author)":
+                                  return { early: 6000, regular: 7000, currency: "BDT" };
+                                case "Local Delegates (Participant)":
+                                  return { early: 5000, regular: 6000, currency: "BDT" };
+                                case "Local Students (Author/ Co-author)":
+                                  return { early: 4000, regular: 5000, currency: "BDT" };
+                                case "Foreign Delegates":
+                                  return { early: 43750, regular: 56250, currency: "BDT", usd_early: 350, usd_regular: 450 };
+                                case "Foreign Students":
+                                  return { early: 25000, regular: 31250, currency: "BDT", usd_early: 200, usd_regular: 250 };
+                                default:
+                                  return { early: 5000, regular: 6000, currency: "BDT" };
+                              }
+                            };
+                            
+                            const fees = getFeeStructure();
+                            const isForeign = attendee.category?.includes("Foreign");
+                            
+                            // Determine which fee applies
+                            let amount, phase;
+                            if (currentDate <= earlyBirdDeadline) {
+                              amount = fees.early;
+                              phase = "Early Bird";
+                            } else if (currentDate <= regularDeadline) {
+                              amount = fees.regular;
+                              phase = "Regular";
+                            } else {
+                              phase = "Late";
+                              amount = fees.regular; // Use regular fee but mark as late
+                            }
+                            
+                            return (
+                              <div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-gray-600">Registration Phase:</span>
+                                  <span className={`font-medium ${phase === "Late" ? "text-red-600" : "text-green-600"}`}>
+                                    {phase} Registration
+                                  </span>
+                                </div>
+                                <div className="flex justify-between items-center mt-2">
+                                  <span className="text-gray-600">Payable Amount:</span>
+                                  <span className="font-bold text-gray-800">
+                                    {amount.toLocaleString()} {fees.currency}
+                                    {isForeign && (
+                                      <span className="ml-2 text-lg font-semibold text-gray-500">
+                                        ({phase === "Early Bird" ? fees.usd_early : fees.usd_regular} USD)
+                                      </span>
+                                    )}
+                                  </span>
+                                </div>
+                                {phase === "Late" && (
+                                  <p className="text-sm text-red-600 mt-1">
+                                    Note: Late registration fees apply.
+                                  </p>
+                                )}
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Download payslip for paid papers */}
                     {isPaid && (
@@ -534,7 +606,7 @@ export default function ProfessionalProfilePage({
           <div className="text-center mt-10">
             <button
               onClick={() => router.push("/")}
-              className="inline-flex items-center px-6 py-3 bg-red-500 hover:bg-red-4 00 text-white rounded-md transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+              className="inline-flex items-center px-6 py-3 bg-red-500 hover:bg-red-400 text-white rounded-md transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
             >
               <svg
                 className="w-5 h-5 mr-2"

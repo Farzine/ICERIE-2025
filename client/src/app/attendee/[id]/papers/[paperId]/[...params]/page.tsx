@@ -80,12 +80,7 @@ export default function PaymentRedirectPage({
   }, [params.id, params.paperId, BACKENDURL]);
 
   const handleDownloadPayslip = (paperId?: string) => {
-    // If you want a per-paper payslip, pass ?paperId=paperId in the URL:
-    // e.g. /payments/paySlip/:id?paperId=${paperId}
-    // If you want all paid papers in one PDF, omit the paperId param
-    let payslipUrl = `${BACKENDURL}/payments/paySlip/${params.id}/paper/${params.paperId}`;
-    
-    window.open(payslipUrl, "_blank");
+    // Robin ata tr kaj
   };
 
   if (loading) {

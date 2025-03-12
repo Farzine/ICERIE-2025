@@ -6,6 +6,7 @@ import Navbar from "@/components/NavBar";
 import axios from "axios";
 import { PlusCircle, X } from "lucide-react";
 import Image from "next/image";
+import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -373,6 +374,7 @@ export default function AttendeePapersPage({
                 papers={attendee.papers}
                 onPayPaper={handlePayForPaper}
                 onDeletePaper={handleDeletePaper}
+                category={attendee.category}
               />
             )}
           </div>

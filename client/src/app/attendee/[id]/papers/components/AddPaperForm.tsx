@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState } from "react";
 
@@ -70,11 +69,15 @@ export default function AddPaperForm({
 
   // Descriptions for each field
   const fieldDescriptions = {
-    proceedingsPublication: "(Only for papers accepted for oral presentation) Please note that if you are interested for published in our proceeding (which might be indexed by Google Scholar, Dimensions, CNKI, Wanfang Data, CPCI (WOS, if applicable), Compendex (if applicable), Scopus etc) additional 50 Euro + Service charge (BDT 7500) will be added. A separate email will send to all authors regarding this publication. The publisher is Atlantis Press (part of Springer Nature)",
-    fullPaperPublication: "Are you interested to publish full paper in softcopy (may be distributed in Pen drive).",
-    presentationType: "Are you registering for poster or oral (According to your acceptance email)?",
+    proceedingsPublication:
+      "(Only for papers accepted for oral presentation) Please note that if you are interested for published in our proceeding (which might be indexed by Google Scholar, Dimensions, CNKI, Wanfang Data, CPCI (WOS, if applicable), Compendex (if applicable), Scopus etc) additional 50 Euro + Service charge (BDT 7500) will be added. A separate email will send to all authors regarding this publication. The publisher is Atlantis Press (part of Springer Nature)",
+    fullPaperPublication:
+      "Are you interested to publish full paper in softcopy (may be distributed in Pen drive).",
+    presentationType:
+      "Are you registering for poster or oral (According to your acceptance email)?",
     visaSupport: "Do you need visa support letter? (foreign delegates)",
-    tourInterested: "An attractive tour will be arranged for delegates and accompanying persons to a beautiful location in Sylhet named \"SADA PATHOR\" in Volagonj. It is adjacent to the Indian boarder. The location is one-hour travelling distance from conference venue. Those who want to participate in the tour must registrar separately paying the required fees: BDT 1500 for Adults and BDT 1000 for Children above three years. Payment should make in cash during conference"
+    tourInterested:
+      'An attractive tour will be arranged for delegates and accompanying persons to a beautiful location in Sylhet named "SADA PATHOR" in Volagonj. It is adjacent to the Indian boarder. The location is one-hour travelling distance from conference venue. Those who want to participate in the tour must registrar separately paying the required fees: BDT 1500 for Adults and BDT 1000 for Children above three years. Payment should make in cash during conference',
   };
 
   return (
@@ -144,7 +147,7 @@ export default function AddPaperForm({
                 <option value="I will publish">I will publish</option>
                 <option value="I will not publish">I will not publish</option>
               </select>
-              
+
               <div className="text-base md:text-lg bg-gray-50 p-2 md:p-3 border-l-4 border-red-500 rounded transition-all duration-200 opacity-100 max-h-40 md:max-h-60 overflow-y-auto">
                 {fieldDescriptions.proceedingsPublication}
               </div>
@@ -169,7 +172,7 @@ export default function AddPaperForm({
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </select>
-              
+
               <div className="text-base md:text-lg bg-gray-50 p-2 md:p-3 border-l-4 border-red-500 rounded transition-all duration-200 opacity-100 max-h-40 md:max-h-60 overflow-y-auto">
                 {fieldDescriptions.fullPaperPublication}
               </div>
@@ -194,7 +197,7 @@ export default function AddPaperForm({
                 <option value="poster">Poster</option>
                 <option value="oral">Oral</option>
               </select>
-              
+
               <div className="text-base md:text-lg bg-gray-50 p-2 md:p-3 border-l-4 border-red-500 rounded transition-all duration-200 opacity-100 max-h-40 md:max-h-60 overflow-y-auto">
                 {fieldDescriptions.presentationType}
               </div>
@@ -219,8 +222,8 @@ export default function AddPaperForm({
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
                   </select>
-                  
-                  <div className={`text-sm bg-gray-50 p-3 border-l-4 border-red-500 rounded transition-all duration-200 ${focusedField === "visaSupport" || visaSupport !== "No" ? "opacity-100 max-h-32" : "opacity-0 max-h-0 overflow-hidden"}`}>
+
+                  <div className="text-base md:text-lg bg-gray-50 p-2 md:p-3 border-l-4 border-red-500 rounded transition-all duration-200 opacity-100 max-h-40 md:max-h-60 overflow-y-auto">
                     {fieldDescriptions.visaSupport}
                   </div>
                 </div>
@@ -234,15 +237,17 @@ export default function AddPaperForm({
                   <select
                     className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     value={tourInterested ? "Yes" : "No"}
-                    onChange={(e) => setTourInterested(e.target.value === "Yes")}
+                    onChange={(e) =>
+                      setTourInterested(e.target.value === "Yes")
+                    }
                     onFocus={() => setFocusedField("tourInterested")}
                     onBlur={() => setFocusedField(null)}
                   >
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
                   </select>
-                  
-                  <div className={`text-sm bg-gray-50 p-3 border-l-4 border-red-500 rounded transition-all duration-200 ${focusedField === "tourInterested" || tourInterested ? "opacity-100 max-h-60 overflow-y-auto" : "opacity-0 max-h-0 overflow-hidden"}`}>
+
+                  <div className="text-base md:text-lg bg-gray-50 p-2 md:p-3 border-l-4 border-red-500 rounded transition-all duration-200 opacity-100 max-h-40 md:max-h-60 overflow-y-auto">
                     {fieldDescriptions.tourInterested}
                   </div>
                 </div>
@@ -260,9 +265,25 @@ export default function AddPaperForm({
           >
             {formSubmitting ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Processing...
               </span>
@@ -275,4 +296,3 @@ export default function AddPaperForm({
     </div>
   );
 }
-

@@ -213,8 +213,8 @@ exports.checkPaymentStatus = async (req, res) => {
           console.log(`Paper ${paper.paperId} paid successfully 💸`);
           paper.payment_status = true;
           // Optionally update paper.transaction_id if the gateway returns it
-          paper.transaction_id =
-            paymentResponse.data.transaction_id || paper.transaction_id;
+          paper.payment_date = Date.now();
+            
         }
       } catch (error) {
         console.log("Error verifying paper:", paper.paperId, error.message);

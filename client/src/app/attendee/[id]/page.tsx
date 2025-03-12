@@ -118,7 +118,9 @@ export default function ProfessionalProfilePage({
 
   // ------------------ Download Payslip ------------------
   const handleDownloadPayslip = (paperId?: string) => {
-    // Robin ata tr kaj
+    const payslipUrl = `/attendee/payslip/${params.id}?paperId=${paperId}`;
+
+    router.push(payslipUrl); // Navigate within the app
   };
 
   // ------------------ Rendering Logic ------------------

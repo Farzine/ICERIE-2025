@@ -80,7 +80,9 @@ export default function PaymentRedirectPage({
   }, [params.id, params.paperId, BACKENDURL]);
 
   const handleDownloadPayslip = (paperId?: string) => {
-    // Robin ata tr kaj
+    const payslipUrl = `/attendee/payslip/${params.id}?paperId=${paperId}`;
+
+    router.push(payslipUrl); // Navigate within the app
   };
 
   if (loading) {

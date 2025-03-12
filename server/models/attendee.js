@@ -40,6 +40,9 @@ const paperSchema = new mongoose.Schema({
   transaction_id: {
     type: String,
   },
+  payment_date: {
+    type: Date,
+  },
   val_id: {
     type: String,
   },

@@ -10,20 +10,16 @@ dotenv.config();
 
 exports.initiatePayment = async (req, res) => {
   const { attendeeId, paperId } = req.params;
-  console.log("AttendeeId:", attendeeId);
-  console.log("PaperId:", paperId);
 
   try {
     // 1) Find the attendee
     const attendee = await Attendee.findById(attendeeId);
-    console.log("Attendee:", attendee);
     if (!attendee) {
       return res.status(404).json({ error: "Attendee not found" });
     }
 
     // 2) Find the specific paper
     const paper = attendee.papers.find((p) => p.paperId === paperId);
-    console.log("Paper:", paper);
     if (!paper) {
       return res
         .status(404)
@@ -85,7 +81,7 @@ exports.initiatePayment = async (req, res) => {
         console.error("Payment initiation error:", error);
         return res.status(500).json({ error: "Payment initiation failed" });
       }
-      console.log("Options:", options);
+      console.log("Options in initiate payment:", options);
 
       try {
         const responseData = JSON.parse(body);
@@ -161,7 +157,7 @@ exports.handleIPN = async (req, res) => {
 
     // If we found a paper, update the paper’s payment status and val_id
     if (paper) {
-      console.log("Paper found:", paper);
+      console.log("Paper found at hanldePIN:", paper);
       if (
         status === "SUCCESS" ||
         status === "VALID" ||
@@ -192,16 +188,12 @@ exports.handleIPN = async (req, res) => {
 
 exports.checkPaymentStatus = async (req, res) => {
   const { attendeeId, paperId } = req.params;
-  console.log("AttendeeId:", attendeeId);
-  console.log("PaperId:", paperId);
 
   try {
     const attendee = await Attendee.findById(attendeeId);
-    console.log("Attendee at checkPaymentStatus:", attendee);
     if (!attendee) return res.status(404).json({ error: "Attendee not found" });
 
     const paper = attendee.papers.find((p) => p.paperId === paperId);
-    console.log("Paper at checkPaymentStatus:", paper);
     if (!paper) {
       return res
         .status(404)
@@ -215,6 +207,7 @@ exports.checkPaymentStatus = async (req, res) => {
         console.log("Payment validation URL:", paymentValidationUrl);
 
         const paymentResponse = await axios.post(paymentValidationUrl);
+        console.log("Payment validation response:", paymentResponse.data);
         // Suppose "200" indicates a valid/confirmed payment
         if (paymentResponse.data.status === "200") {
           console.log(`Paper ${paper.paperId} paid successfully 💸`);
@@ -286,142 +279,3 @@ exports.updatePaymentStatus = async (req, res) => {
   }
 };
 
-/**
- * Download a PDF payslip for the given attendee (and optionally a specific paper).
- * Example GET /payment/paySlip/:id/paper/:paperId
- */
-exports.downloadPaySlip = async (req, res) => {
-  try {
-    const { attendeeId, paperId } = req.params; // If you want a single paper's slip
-
-    // 1) Find the attendee
-    const attendee = await Attendee.findById(attendeeId);
-    if (!attendee) {
-      return res.status(404).json({ error: "Attendee not found" });
-    }
-
-    // 2) For a "paper-level" slip, find the specific paper
-    let paper = null;
-    if (paperId) {
-      paper = attendee.papers.find((p) => p.paperId === paperId);
-      if (!paper) {
-        return res
-          .status(404)
-          .json({ error: "Paper not found for this attendee" });
-      }
-
-      // Only allow generating receipts for paid papers
-      if (!paper.payment_status) {
-        return res
-          .status(400)
-          .json({ error: "Cannot generate receipt for unpaid paper" });
-      }
-    }
-
-    // 3) Create a new PDF document
-    const doc = new PDFDocument({ size: "A4", margin: 50 });
-
-    // 4) Set response headers to trigger a download
-    const filename = `payslip_${attendeeId}${paperId ? "_" + paperId : ""}.pdf`;
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="${filename}"`
-    );
-    res.setHeader("Content-Type", "application/pdf");
-
-    // Pipe PDF data to the response
-    doc.pipe(res);
-
-    // 5) Add a title and some styling
-    doc
-      .fontSize(18)
-      .text("ICERIE 2025 Conference - Payment Receipt", { align: "center" })
-      .moveDown();
-
-    // 6) Add attendee info
-    doc
-      .fontSize(12)
-      .text(`Name: ${attendee.name}`)
-      .text(`Email: ${attendee.email}`)
-      .text(`University: ${attendee.university || "Not specified"}`)
-      .text(`Category: ${attendee.category || "Not specified"}`)
-      .moveDown();
-
-    // 7) If it's a single-paper slip, show details about that paper
-    if (paper) {
-      doc
-        .fontSize(14)
-        .text("Paper Payment Details:", { underline: true })
-        .moveDown(0.5);
-
-      doc.fontSize(12).text(`Paper ID: ${paper.paperId}`);
-      doc.text(`Track: ${paper.track}`);
-
-      // Only include these fields if they exist
-      if (paper.proceedingsPublication !== undefined) {
-        doc.text(`Proceedings Publication: ${paper.proceedingsPublication}`);
-      }
-      if (paper.fullPaperPublication !== undefined) {
-        doc.text(`Full Paper Publication: ${paper.fullPaperPublication}`);
-      }
-      if (paper.presentationType !== undefined) {
-        doc.text(`Presentation Type: ${paper.presentationType}`);
-      }
-      doc.moveDown();
-
-      // Payment details
-      doc.text(`Payment Status: Paid`);
-      if (paper.transaction_id) {
-        doc.text(`Transaction ID: ${paper.transaction_id}`);
-      }
-      if (paper.val_id) {
-        doc.text(`Payment Reference (val_id): ${paper.val_id}`);
-      }
-
-      // You could also display `payment_date` or other fields if you have them
-      // doc.text(`Payment Date: ${paper.payment_date || "Unknown"}`);
-
-    } else {
-      // 8) If no paperId, show a summary of all paid papers
-      doc
-        .fontSize(14)
-        .text("Papers Payment Summary:", { underline: true })
-        .moveDown(0.5);
-
-      const paidPapers = attendee.papers.filter((p) => p.payment_status);
-
-      if (paidPapers.length === 0) {
-        doc.fontSize(12).text("No paid papers found for this attendee.");
-      } else {
-        paidPapers.forEach((paper, i) => {
-          doc.fontSize(12).text(`Paper ${i + 1}:`);
-          doc.text(`   Paper ID: ${paper.paperId}`);
-          doc.text(`   Track: ${paper.track}`);
-          if (paper.transaction_id) {
-            doc.text(`   Transaction ID: ${paper.transaction_id}`);
-          }
-          if (paper.val_id) {
-            doc.text(`   Payment Reference: ${paper.val_id}`);
-          }
-          doc.moveDown(0.5);
-        });
-      }
-    }
-
-    // 9) Closing note
-    doc.moveDown();
-    doc.text(
-      "Thank you for your payment. We look forward to your participation!",
-      { italic: true }
-    );
-    doc.moveDown();
-    doc.text(`Receipt generated on: ${new Date().toLocaleDateString()}`);
-
-    // 10) Finalize the PDF and end the response
-    doc.end();
-    // The PDF data will stream to the client, prompting a file download
-  } catch (error) {
-    console.error("Error generating payslip PDF:", error);
-    res.status(500).json({ error: "Could not generate PDF" });
-  }
-};

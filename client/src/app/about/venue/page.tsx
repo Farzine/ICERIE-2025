@@ -2,9 +2,12 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/NavBar";
 import Carousel from "@/js";
+import { useState } from "react";
 import { PiMapPinArea } from "react-icons/pi";
 
 export default function Venue() {
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="fixed top-0 left-0 right-0 z-50">
@@ -32,21 +35,29 @@ export default function Venue() {
 
         {/* Map */}
         <div className="google-map-sust w-full drop-shadow-md flex justify-center items-center my-8 px-5">
-          <div className="w-full h-64 md:h-96 lg:w-[1000px] lg:h-[450px]">
+          <div className="w-full h-64 md:h-96 lg:w-[1000px] lg:h-[450px] relative">
+            {!isMapLoaded && (
+                <div className="absolute inset-0 bg-gray-100 flex flex-col items-center justify-center">
+                <div className="w-12 h-12 border-4 border-gray-300 border-t-red-500 rounded-full animate-spin mb-2"></div>
+                <div className="text-gray-600 font-medium text-sm md:text-base">Loading loacation map...</div>
+                </div>
+            )}
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3618.435552561316!2d91.82933827436678!3d24.91722804298561!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3750556002144eab%3A0xe277e14dbca9f2ab!2sShahjalal%20University%20of%20Science%20and%20Technology!5e0!3m2!1sen!2sbd!4v1721041724355!5m2!1sen!2sbd"
-              className="w-full h-full"
+              className={`w-full h-full ${
+                isMapLoaded ? "opacity-100" : "opacity-0"
+              }`}
               style={{ border: 0 }}
               allowFullScreen
-              loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
+              onLoad={() => setIsMapLoaded(true)}
             ></iframe>
           </div>
         </div>
       </main>
 
-          {/* Carousel Section */}
-          <div className="container mx-auto px-4 py-8 hidden">
+      {/* Carousel Section */}
+      <div className="container mx-auto px-4 py-8 hidden">
         <Carousel />
       </div>
 

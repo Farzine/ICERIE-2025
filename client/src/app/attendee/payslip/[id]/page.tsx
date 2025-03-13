@@ -62,138 +62,149 @@ const PayslipPage = ({ params }: { params: { id: string } }) => {
 
 
   // console.log(paymentsData);
-  
+
   return (
-    <div className="max-w-4xl mx-auto my-auto p-6 bg-white text-slate-500 shadow-md rounded mt-10 border font-sans">
-      <div ref={invoiceRef} className="p-6">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-white text-slate-600 shadow-lg rounded-lg my-8 border border-gray-200 font-sans print:shadow-none print:border-0">
+      <div ref={invoiceRef} className="p-3 sm:p-6">
         {/* Header */}
-        <div className="border-b pb-6 mb-6 flex items-center">
-          <div className="flex-1">
-            <div className="logo flex gap-2">
-            <Image
-              src="https://res.cloudinary.com/djmgdgx86/image/upload/v1724840698/icerieLogo_zkafbk.jpg"
-              width={150}
-              height={150}
-              alt="ICERIE 2025 Logo"
-              className="h-12 w-auto"
-            />
-            <Image
-              src="/sustLogo.png"
-              alt="sust logo"
-              width={40}
-              height={40}
-            
-            />
+        <div className="border-b border-gray-200 pb-6 mb-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-3">
+                <Image
+                  src="/icLogo.webp"
+                  width={150}
+                  height={80}
+                  alt="ICERIE 2025 Logo"
+                  className="h-10 sm:h-12 w-auto object-contain"
+                />
+                <Image
+                  src="/sustLogo.png"
+                  alt="SUST Logo"
+                  width={40}
+                  height={40}
+                  className="h-8 sm:h-10 w-auto object-contain"
+                />
+              </div>
+              <p className="text-lg sm:text-xl text-red-600 font-semibold text-center sm:text-left">
+                8th International Conference on Engineering Research, Innovation
+                and Education (ICERIE 2025)
+              </p>
+              <p className="text-sm text-slate-500 text-center sm:text-left">
+                Shahjalal University of Science and Technology
+              </p>
+              <p className="text-sm text-slate-500 text-center sm:text-left">Sylhet, Bangladesh</p>
             </div>
-            <p className="text-xl text-red-500 font-semibold ">
-              8th International Conference on Engineering Research, Innovation
-              and Education (ICERIE 2025)
-            </p>
-            <p className="text-sm text-slate-500">
-              Shahjalal University of Science and Technology
-            </p>
-            <p className="text-sm text-slate-500">Sylhet, Bangladesh</p>
+            <div className="text-center sm:text-right mt-3 sm:mt-0">
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 uppercase">Invoice</h1>
+              <span className="text-lg sm:text-xl text-slate-700 font-semibold block"># {paperData?.val_id}</span>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-slate-700 flex flex-col uppercase text-right">
-            #Invoice
-            <span className="text-xl">{paperData?.val_id}</span> 
-          </h1>
-          
         </div>
 
         {/* Attendee Info */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div>
-            <h2 className="font-semibold text-slate-700">
-              Participant Details:
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h2 className="font-semibold text-slate-800 mb-2 border-b pb-1">
+              Participant Details
             </h2>
-            <p className="text-black font-semibold">{paymentsData.name}</p>
-            <p className="text-sm text-slate-500">{paymentsData.university}</p>
-            <p className="text-sm text-slate-500">
-              Email: {paymentsData.email}
+            <p className="text-slate-800 font-semibold">{paymentsData.name}</p>
+            <p className="text-sm text-slate-600">{paymentsData.university}</p>
+            <p className="text-sm text-slate-600 mt-2">
+              <span className="font-medium">Email:</span> {paymentsData.email}
             </p>
-            <p className="text-sm text-slate-500">
-              Phone: {paymentsData.phone}
+            <p className="text-sm text-slate-600">
+              <span className="font-medium">Phone:</span> {paymentsData.phone}
             </p>
           </div>
-          <div className="text-right">
-            <p className="text-sm text-slate-500">
-              Validation ID #:{" "}
-              <span className="font-semibold text-black">
-                {paperData?.val_id}
-              </span>
+          <div className="bg-gray-50 p-4 rounded-lg sm:text-right">
+            <h2 className="font-semibold text-slate-800 mb-2 border-b pb-1 sm:text-right">
+              Payment Information
+            </h2>
+            <p className="text-sm text-slate-600">
+              Validation ID: <span className="font-semibold text-slate-800">{paperData?.val_id}</span>
             </p>
-            <p className="text-sm text-slate-500">Paper ID: {paperId}</p>
-            <p className="text-sm text-slate-500">
-              Category: {paymentsData.category}
+            <p className="text-sm text-slate-600">
+              Paper ID: <span className="font-semibold text-slate-800">{paperId}</span>
             </p>
-            <p className="text-sm text-slate-500 my-2">
-              Payment Status:{" "}
-              <span className="font-semibold text-md text-green-700">
-                Paid
-              </span>
+            <p className="text-sm text-slate-600">
+              Category: <span className="font-semibold text-slate-800">{paymentsData.category}</span>
             </p>
-            <p className="text-sm text-slate-500 my-2">
-             Payment Date :  <span className="font-semibold text-black">{new Date(paperData?.payment_date).toLocaleDateString()}</span>
-             
+            <p className="text-sm text-slate-600 mt-2">
+              Status: <span className="font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full text-xs">Paid</span>
+            </p>
+            <p className="text-sm text-slate-600 mt-2">
+              Date: <span className="font-semibold text-slate-800">{new Date(paperData?.payment_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
             </p>
           </div>
         </div>
 
         {/* Paper Details */}
-        <table className="min-w-full table-auto mb-6 border border-slate-200">
-          <thead>
-            <tr className="bg-slate-100">
-              <th className="px-4 py-2 text-left">Track</th>
-              <th className="px-4 py-2 text-left">Publication</th>
-              <th className="px-4 py-2 text-left">Presentation</th>
-              <th className="px-4 py-2 text-left">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paperData ? (
-              <tr>
-                <td className="border px-4 py-2">{paperData.track}</td>
-                <td className="border px-4 py-2">
-                  {paperData.fullPaperPublication}
-                </td>
-                <td className="border px-4 py-2">
-                  {paperData.presentationType}
-                </td>
-                <td className="border px-4 py-2 text-green-700 font-semibold">
-                  {paperData.payment_status ? "Paid" : "Pending"}
-                </td>
+        <div className="overflow-x-auto mb-8">
+          <table className="w-full table-auto border-collapse">
+            <thead>
+              <tr className="bg-slate-100">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Track</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Publication</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Presentation</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Status</th>
               </tr>
-            ) : (
-              <tr>
-                <td colSpan={4} className="border px-4 py-2 text-center">
-                  No Paper Found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-         
+            </thead>
+            <tbody>
+              {paperData ? (
+                <tr>
+                  <td className="border border-slate-200 px-4 py-3 text-slate-600">{paperData.track}</td>
+                  <td className="border border-slate-200 px-4 py-3 text-slate-600">{paperData.fullPaperPublication}</td>
+                  <td className="border border-slate-200 px-4 py-3 text-slate-600">{paperData.presentationType}</td>
+                  <td className="border border-slate-200 px-4 py-3">
+                    {paperData.payment_status ? (
+                      <span className="bg-green-50 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">Paid</span>
+                    ) : (
+                      <span className="bg-yellow-50 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">Pending</span>
+                    )}
+                  </td>
+                </tr>
+              ) : (
+                <tr>
+                  <td colSpan={4} className="border px-4 py-3 text-center text-slate-500">
+                    No Paper Found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
         {/* Footer */}
-        <div className="text-sm text-slate-500 border-t pt-6">
-          <p>Payment inquiries: icerie2025@sust.edu</p>
-          <p>Thank you for your participation!</p>
+        <div className="text-sm text-slate-500 border-t border-gray-200 pt-6 mt-8">
+          <div className="flex flex-col sm:flex-row justify-between">
+            <div>
+              <p className="mb-1">For payment inquiries: <a href="mailto:icerie2025@sust.edu" className="text-blue-600 hover:underline">icerie2025@sust.edu</a></p>
+              <p>Thank you for your participation in ICERIE 2025!</p>
+            </div>
+            <div className="mt-3 sm:mt-0">
+              <p className="text-xs text-slate-400">Document generated on: {new Date().toLocaleDateString()}</p>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Print & Download Buttons */}
-      <div className="flex justify-end space-x-4 mt-4">
+      <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 print:hidden">
         <button
           onClick={handlePrint}
-          className="group px-4 py-2 border-2 border-red-500 text-red-500 rounded shadow hover:bg-red-500 hover:text-white"
+          className="flex items-center justify-center px-4 py-2 border-2 border-red-600 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition-colors duration-200 gap-2"
         >
-          <IoMdPrint className="inline-block text-red-500 mr-2 h-5 w-5 group-hover:text-white" />
-          Print
+          <IoMdPrint className="h-5 w-5" />
+          <span>Print Invoice</span>
         </button>
         <button
           onClick={handleDownloadPDF}
-          className="px-4 py-2 bg-black text-white rounded shadow hover:bg-white hover:text-black hover:border-black border-2"
+          className="flex items-center justify-center px-4 py-2 bg-slate-800 text-white border-2 border-slate-800 rounded-md hover:bg-white hover:text-slate-800 transition-colors duration-200"
         >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
           Download PDF
         </button>
       </div>

@@ -33,6 +33,11 @@ const paperSchema = new mongoose.Schema({
     enum: ["poster", "oral"],
     required: true,
   },
+  presentationMood: {
+    type: String,
+    enum: ["physical", "online"],
+    required: true,
+  },
   payment_status: {
     type: Boolean,
     default: false,

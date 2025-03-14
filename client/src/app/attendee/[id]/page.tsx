@@ -6,6 +6,7 @@ import axios from "axios";
 import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import Carousel from "@/js";
+import { PlusCircle, X } from "lucide-react";
 
 // ------------------ Interfaces ------------------
 interface Paper {
@@ -45,7 +46,9 @@ export default function ProfessionalProfilePage({
   const [attendee, setAttendee] = useState<Attendee | null>(null);
 
   // For tabs
-  const [selectedTab, setSelectedTab] = useState<"profile" | "papers">("profile");
+  const [selectedTab, setSelectedTab] = useState<"profile" | "papers">(
+    "profile"
+  );
 
   const BACKENDURL = process.env.NEXT_PUBLIC_APP_BACKEND_URL;
 
@@ -74,7 +77,6 @@ export default function ProfessionalProfilePage({
 
     fetchAttendee();
   }, [params.id, BACKENDURL]);
-
 
   // Pay for a single paper
   const handlePayForPaper = async (paperId: string) => {
@@ -115,7 +117,6 @@ export default function ProfessionalProfilePage({
     }
   };
 
-
   // ------------------ Download Payslip ------------------
   const handleDownloadPayslip = (paperId?: string) => {
     const payslipUrl = `/attendee/payslip/${params.id}?paperId=${paperId}`;
@@ -137,7 +138,7 @@ export default function ProfessionalProfilePage({
             <div className="flex justify-center mb-8">
               <div className="h-10 bg-gray-200 rounded-full w-64 animate-pulse"></div>
             </div>
-            
+
             {/* Attendee Information Card Skeleton */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8 border-t-4 border">
               <div className="bg-gray-200 p-4 h-14 animate-pulse"></div>
@@ -227,7 +228,9 @@ export default function ProfessionalProfilePage({
         </div>
         <div className="flex-grow flex flex-col items-center justify-center px-4">
           <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full border-t-4 border-red-500">
-            <h2 className="text-2xl font-bold text-center mb-4">No Data Found</h2>
+            <h2 className="text-2xl font-bold text-center mb-4">
+              No Data Found
+            </h2>
             <p className="text-gray-700 text-center mb-8">
               Unable to retrieve your information. Please try again later.
             </p>
@@ -252,8 +255,12 @@ export default function ProfessionalProfilePage({
   // ------------------ TABS Content ------------------
   const renderProfileTab = () => (
     <div className="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-red-500 transition-all duration-300">
-      <div className="bg-red-500 p-5 text-white">
-        <h2 className="text-xl font-semibold">Profile Information</h2>
+      <div className="bg-red-500 p-5 text-white flex justify-between items-center">
+        <h2 className="text-3xl font-semibold">Profile Information</h2>
+        <button className="flex items-center gap-2 px-4 py-2 bg-white text-red-500 rounded-lg hover:bg-gray-100 transition " onClick={() => router.push(`/attendee/${params.id}/papers`)}>
+          <PlusCircle size={18} className="mr-2" />
+          <span className="text-red-500">Add Paper</span>
+        </button>
       </div>
       <div className="p-6 md:p-8">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
@@ -265,31 +272,31 @@ export default function ProfessionalProfilePage({
             />
           ) : (
             <div className="w-36 h-36 rounded-full bg-gray-100 flex items-center justify-center border-2 border-gray-200">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-20 w-20 text-gray-400" 
-                fill="none" 
-                viewBox="0 0 24 24" 
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-20 w-20 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={1} 
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                 />
               </svg>
             </div>
           )}
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">{attendee.name}</h1>
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              {attendee.name}
+            </h1>
             <div className="text-xl text-gray-600 space-y-1">
               {attendee.category && (
                 <p className="font-semibold">{attendee.category}</p>
               )}
-              {attendee.university && (
-                <p>{attendee.university}</p>
-              )}
+              {attendee.university && <p>{attendee.university}</p>}
             </div>
           </div>
         </div>
@@ -307,12 +314,16 @@ export default function ProfessionalProfilePage({
           )}
           {attendee.visaSupport && (
             <div className="">
-              <span className="font-semibold text-gray-800 w-28">Visa-Support:</span>
+              <span className="font-semibold text-gray-800 w-28">
+                Visa-Support:
+              </span>
               <span className="text-gray-600 ml-6">{attendee.visaSupport}</span>
             </div>
           )}
           <div className="">
-            <span className="font-semibold text-gray-800 w-28">Tour Interest:</span>
+            <span className="font-semibold text-gray-800 w-28">
+              Tour Interest:
+            </span>
             <span className="text-gray-600 ml-6">
               {attendee.tourInterested ? "Yes" : "No"}
             </span>
@@ -324,8 +335,12 @@ export default function ProfessionalProfilePage({
 
   const renderPapersTab = () => (
     <div className="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-red-500 transition-all duration-300">
-      <div className="bg-red-500 p-5 text-white">
-        <h2 className="text-xl font-semibold">Papers & Payment Details</h2>
+      <div className="bg-red-500 p-5 flex justify-between items-center text-white">
+        <h2 className="text-3xl font-semibold">Papers & Payment Details</h2>
+        <button className="flex items-center gap-2 px-4 py-2 bg-white text-red-500 rounded-lg hover:bg-gray-100 transition " onClick={() => router.push(`/attendee/${params.id}/papers`)}>
+          <PlusCircle size={18} className="mr-2" />
+          <span className="text-red-500">Add Paper</span>
+        </button>
       </div>
       <div className="p-6 md:p-8">
         {attendee.papers.length === 0 ? (
@@ -365,7 +380,8 @@ export default function ProfessionalProfilePage({
                     }`}
                   >
                     <h3 className="font-bold text-gray-800 mb-2 sm:mb-0">
-                      Paper #{index + 1}: <span className="font-mono">{paper.paperId}</span>
+                      Paper #{index + 1}:{" "}
+                      <span className="font-mono">{paper.paperId}</span>
                     </h3>
                     <span
                       className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-medium ${
@@ -381,24 +397,40 @@ export default function ProfessionalProfilePage({
                   <div className="p-5 space-y-5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
                       <div>
-                        <div className="font-medium text-gray-800 mb-1">Track:</div>
+                        <div className="font-medium text-gray-800 mb-1">
+                          Track:
+                        </div>
                         <div className="text-gray-600">{paper.track}</div>
                       </div>
                       <div>
-                        <div className="font-medium text-gray-800 mb-1">Presentation Type:</div>
-                        <div className="text-gray-600 capitalize">{paper.presentationType}</div>
+                        <div className="font-medium text-gray-800 mb-1">
+                          Presentation Type:
+                        </div>
+                        <div className="text-gray-600 capitalize">
+                          {paper.presentationType}
+                        </div>
                       </div>
                       <div>
-                        <div className="font-medium text-gray-800 mb-1">Proceedings Publication:</div>
-                        <div className="text-gray-600">{paper.proceedingsPublication}</div>
+                        <div className="font-medium text-gray-800 mb-1">
+                          Proceedings Publication:
+                        </div>
+                        <div className="text-gray-600">
+                          {paper.proceedingsPublication}
+                        </div>
                       </div>
                       <div>
-                        <div className="font-medium text-gray-800 mb-1">Full Paper Publication:</div>
-                        <div className="text-gray-600">{paper.fullPaperPublication}</div>
+                        <div className="font-medium text-gray-800 mb-1">
+                          Full Paper Publication:
+                        </div>
+                        <div className="text-gray-600">
+                          {paper.fullPaperPublication}
+                        </div>
                       </div>
                       {paper.val_id && (
                         <div className="md:col-span-2">
-                          <div className="font-medium text-gray-800 mb-1">Validation ID:</div>
+                          <div className="font-medium text-gray-800 mb-1">
+                            Validation ID:
+                          </div>
                           <div className="font-mono text-gray-600 bg-gray-50 p-2 rounded border border-gray-100">
                             {paper.val_id}
                           </div>
@@ -408,34 +440,69 @@ export default function ProfessionalProfilePage({
                     {/* Payment Amount Information */}
                     {!isPaid && (
                       <div className="bg-gray-50 p-4 rounded-md border border-gray-200 mb-4">
-                        <h4 className="font-semibold text-gray-800 mb-2">Payment Information:</h4>
+                        <h4 className="font-semibold text-gray-800 mb-2">
+                          Payment Information:
+                        </h4>
                         <div className="space-y-2">
                           {(() => {
-                            const earlyBirdDeadline = new Date("2025-03-25T23:59:59Z");
-                            const regularDeadline = new Date("2025-04-10T23:59:59Z");
+                            const earlyBirdDeadline = new Date(
+                              "2025-03-25T23:59:59Z"
+                            );
+                            const regularDeadline = new Date(
+                              "2025-04-10T23:59:59Z"
+                            );
                             const currentDate = new Date();
-                            
+
                             // Get fee structure based on attendee category
                             const getFeeStructure = () => {
                               switch (attendee.category) {
                                 case "Local Delegates (Author)":
-                                  return { early: 6000, regular: 7000, currency: "BDT" };
+                                  return {
+                                    early: 6000,
+                                    regular: 7000,
+                                    currency: "BDT",
+                                  };
                                 case "Local Delegates (Participant)":
-                                  return { early: 5000, regular: 6000, currency: "BDT" };
+                                  return {
+                                    early: 5000,
+                                    regular: 6000,
+                                    currency: "BDT",
+                                  };
                                 case "Local Students (Author/ Co-author)":
-                                  return { early: 4000, regular: 5000, currency: "BDT" };
+                                  return {
+                                    early: 4000,
+                                    regular: 5000,
+                                    currency: "BDT",
+                                  };
                                 case "Foreign Delegates":
-                                  return { early: 43750, regular: 56250, currency: "BDT", usd_early: 350, usd_regular: 450 };
+                                  return {
+                                    early: 43750,
+                                    regular: 56250,
+                                    currency: "BDT",
+                                    usd_early: 350,
+                                    usd_regular: 450,
+                                  };
                                 case "Foreign Students":
-                                  return { early: 25000, regular: 31250, currency: "BDT", usd_early: 200, usd_regular: 250 };
+                                  return {
+                                    early: 25000,
+                                    regular: 31250,
+                                    currency: "BDT",
+                                    usd_early: 200,
+                                    usd_regular: 250,
+                                  };
                                 default:
-                                  return { early: 5000, regular: 6000, currency: "BDT" };
+                                  return {
+                                    early: 5000,
+                                    regular: 6000,
+                                    currency: "BDT",
+                                  };
                               }
                             };
-                            
+
                             const fees = getFeeStructure();
-                            const isForeign = attendee.category?.includes("Foreign");
-                            
+                            const isForeign =
+                              attendee.category?.includes("Foreign");
+
                             // Determine which fee applies
                             let amount, phase;
                             if (currentDate <= earlyBirdDeadline) {
@@ -448,22 +515,36 @@ export default function ProfessionalProfilePage({
                               phase = "Late";
                               amount = fees.regular; // Use regular fee but mark as late
                             }
-                            
+
                             return (
                               <div>
                                 <div className="flex justify-between items-center">
-                                  <span className="text-gray-600">Registration Phase:</span>
-                                  <span className={`font-medium ${phase === "Late" ? "text-red-600" : "text-green-600"}`}>
+                                  <span className="text-gray-600">
+                                    Registration Phase:
+                                  </span>
+                                  <span
+                                    className={`font-medium ${
+                                      phase === "Late"
+                                        ? "text-red-600"
+                                        : "text-green-600"
+                                    }`}
+                                  >
                                     {phase} Registration
                                   </span>
                                 </div>
                                 <div className="flex justify-between items-center mt-2">
-                                  <span className="text-gray-600">Payable Amount:</span>
+                                  <span className="text-gray-600">
+                                    Payable Amount:
+                                  </span>
                                   <span className="font-bold text-gray-800">
                                     {amount.toLocaleString()} {fees.currency}
                                     {isForeign && (
                                       <span className="ml-2 text-lg font-semibold text-gray-500">
-                                        ({phase === "Early Bird" ? fees.usd_early : fees.usd_regular} USD)
+                                        (
+                                        {phase === "Early Bird"
+                                          ? fees.usd_early
+                                          : fees.usd_regular}{" "}
+                                        USD)
                                       </span>
                                     )}
                                   </span>
@@ -505,46 +586,46 @@ export default function ProfessionalProfilePage({
                     )}
                     {!isPaid && (
                       <div className="flex flex-col sm:flex-row gap-3">
-                      <button
-                        onClick={() => handlePayForPaper(paper.paperId)}
-                        className="inline-flex items-center px-5 py-2.5 bg-red-500 hover:bg-red-400 text-white rounded-md transition-colors duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-                      >
-                        <svg
-                          className="w-5 h-5 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
+                        <button
+                          onClick={() => handlePayForPaper(paper.paperId)}
+                          className="inline-flex items-center px-5 py-2.5 bg-red-500 hover:bg-red-400 text-white rounded-md transition-colors duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-                          />
-                        </svg>
-                        Pay Now
-                      </button>
-                      <button
-                        onClick={() => handleDeletePaper(paper.paperId)}
-                        className="inline-flex items-center px-5 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 focus:ring-2 focus:ring-red-300 transition-colors shadow-sm"
-                      >
-                        <svg
-                        className="w-5 h-5 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
+                          <svg
+                            className="w-5 h-5 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+                            />
+                          </svg>
+                          Pay Now
+                        </button>
+                        <button
+                          onClick={() => handleDeletePaper(paper.paperId)}
+                          className="inline-flex items-center px-5 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 focus:ring-2 focus:ring-red-300 transition-colors shadow-sm"
                         >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                        </svg>
-                        Delete
-                      </button>
+                          <svg
+                            className="w-5 h-5 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                          Delete
+                        </button>
                       </div>
                     )}
                   </div>
@@ -571,7 +652,7 @@ export default function ProfessionalProfilePage({
           <h1 className="text-3xl md:text-3xl font-bold text-center text-gray-800 mb-8">
             Attendee Dashboard
           </h1>
-          
+
           {/* ------------------ Tab Buttons ------------------ */}
           <div className="flex justify-center mb-8">
             <div className="bg-white rounded-full shadow-sm p-1 inline-flex">
@@ -630,8 +711,8 @@ export default function ProfessionalProfilePage({
         </div>
       </div>
       <div className="container mx-auto px-4 py-8 hidden">
-          <Carousel />
-        </div>
+        <Carousel />
+      </div>
 
       <Footer />
     </main>

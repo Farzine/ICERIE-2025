@@ -97,10 +97,10 @@ const ContactUs: React.FC = () => {
             />
           </div>
           <a 
-            href="https://wa.me/8801793834474" 
+            href="https://wa.me/+8801844175805" 
             className="text-lg md:text-xl text-gray-700 hover:text-red-500 transition-colors duration-300 font-medium"
           >
-            +8801793834474
+            +880 1844-175805
           </a>
           </div>
           

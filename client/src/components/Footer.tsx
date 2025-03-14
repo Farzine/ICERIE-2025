@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
         {/* Social Icons Section */}
         <div className="flex space-x-6 justify-center mb-4 md:mb-0">
           <a
-            href="https://wa.me/+8801700000000"
+            href="https://wa.me/+8801844175805"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-green-500 transition"

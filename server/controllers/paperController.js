@@ -14,8 +14,11 @@ const addPaperToAttendee = async (req, res) => {
           // Only used if first paper
           visaSupport,
           tourInterested,
+          presentationMood
         } = req.body;
-    
+
+
+      
         const attendee = await Attendee.findById(id);
         if (!attendee) {
           return res.status(404).json({ message: "Attendee not found" });
@@ -25,6 +28,7 @@ const addPaperToAttendee = async (req, res) => {
         if (attendee.papers.length === 0) {
           attendee.visaSupport = visaSupport;
           attendee.tourInterested = tourInterested;
+         
         }
     
         // Create a new paper object
@@ -34,6 +38,7 @@ const addPaperToAttendee = async (req, res) => {
           proceedingsPublication,
           fullPaperPublication,
           presentationType,
+          presentationMood,
         };
     
         // Add it to the attendee’s papers array

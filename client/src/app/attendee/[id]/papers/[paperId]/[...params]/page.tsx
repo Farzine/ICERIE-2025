@@ -7,6 +7,7 @@ import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import Carousel from "@/js";
 
+
 interface Paper {
   paperId: string;
   track: string;

@@ -281,7 +281,7 @@ export default function Registration() {
     try {
       const response = await axios.post(`${baseUrl}/registration`, form);
       if (response.status === 201) {
-        route.push(`${frontendUrl}/attendee/${response.data._id}`);
+        route.push(`${frontendUrl}/attendee/${response.data._id}/papers`);
         toast.success("Registration successful.");
       }
     } catch (error) {

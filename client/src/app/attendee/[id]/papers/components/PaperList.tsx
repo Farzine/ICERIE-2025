@@ -9,6 +9,7 @@ interface PaperInterface {
   proceedingsPublication: string;
   fullPaperPublication: string;
   presentationType: string;
+  presentationMood: string;
   payment_status: boolean;
   val_id?: string;
 }
@@ -81,6 +82,14 @@ export default function PaperList({
                     </span>
                     <span className="text-gray-800 text-xl">
                       {paper.fullPaperPublication}
+                    </span>
+                  </p>
+                  <p className="flex items-baseline">
+                    <span className="font-medium text-gray-700 w-32 text-xl">
+                      will be presented:
+                    </span>
+                    <span className="text-gray-800 text-xl">
+                      {paper.presentationMood}
                     </span>
                   </p>
                 </div>

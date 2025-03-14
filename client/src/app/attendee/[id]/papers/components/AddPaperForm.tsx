@@ -15,6 +15,7 @@ interface AddPaperFormProps {
     presentationType: string;
     visaSupport?: string;
     tourInterested?: boolean;
+    presentationMood: string;
   }) => void;
 }
 
@@ -33,6 +34,7 @@ export default function AddPaperForm({
   const [proceedingsPublication, setProceedingsPublication] = useState("");
   const [fullPaperPublication, setFullPaperPublication] = useState("");
   const [presentationType, setPresentationType] = useState("");
+  const [presentationMood, setPresentationMood] = useState("");
 
   // Only used if it's the first paper
   const [visaSupport, setVisaSupport] = useState("No");
@@ -49,6 +51,7 @@ export default function AddPaperForm({
       proceedingsPublication,
       fullPaperPublication,
       presentationType,
+      presentationMood,
     };
     if (isFirstPaper) {
       newPaperData.visaSupport = visaSupport;
@@ -64,6 +67,7 @@ export default function AddPaperForm({
     setFullPaperPublication("");
     setPresentationType("");
     setVisaSupport("No");
+    setPresentationMood("");
     setTourInterested(false);
   };
 
@@ -72,7 +76,7 @@ export default function AddPaperForm({
     proceedingsPublication:
       "(Only for papers accepted for oral presentation) Please note that if you are interested for published in our proceeding (which might be indexed by Google Scholar, Dimensions, CNKI, Wanfang Data, CPCI (WOS, if applicable), Compendex (if applicable), Scopus etc) additional 50 Euro + Service charge (BDT 7500) will be added. A separate email will send to all authors regarding this publication. The publisher is Atlantis Press (part of Springer Nature)",
     fullPaperPublication:
-      "Are you interested to publish full paper in softcopy (may be distributed in Pen drive).",
+      "The softcopy of the full paper may be distributed in Pen drive (included in registration fee)",
     presentationType:
       "Are you registering for poster or oral (According to your acceptance email)?",
     visaSupport: "Do you need visa support letter? (foreign delegates)",
@@ -157,7 +161,8 @@ export default function AddPaperForm({
           {/* Full Paper Publication */}
           <div className="flex flex-col">
             <label className="mb-2 font-medium text-gray-700">
-              Full Paper Publication <span className="text-red-500">*</span>
+              Select Yes If you are interested to publish Softcopy{" "}
+              <span className="text-red-500">*</span>
             </label>
             <div className="space-y-3">
               <select
@@ -204,6 +209,29 @@ export default function AddPaperForm({
             </div>
           </div>
 
+          {/* Presentation Mode */}
+          <div className="flex flex-col">
+            <label className="mb-2 font-medium text-gray-700">
+              What is you prefer mode of presentation ?{" "}
+              <span className="text-red-500">*</span>
+            </label>
+            <div className="space-y-3">
+              <select
+                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                value={presentationMood}
+                onChange={(e) => setPresentationMood(e.target.value)}
+                onFocus={() => setFocusedField("presentationMode")}
+                onBlur={() => setFocusedField(null)}
+                required
+              >
+                <option value="">-- Select Option --</option>
+                <option value="physical">Physical</option>
+                <option value="online">Online</option>
+              </select>
+
+             
+            </div>
+          </div>
           {/* If first paper => visaSupport, tourInterested */}
           {isFirstPaper && (
             <>

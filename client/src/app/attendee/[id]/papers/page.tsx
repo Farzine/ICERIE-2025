@@ -27,6 +27,7 @@ interface PaperInterface {
   presentationType: string;
   payment_status: boolean;
   val_id?: string;
+  presentationMood?: string;
 }
 
 interface AttendeeInterface {
@@ -84,6 +85,7 @@ export default function AttendeePapersPage({
     presentationType: string;
     visaSupport?: string;
     tourInterested?: boolean;
+    presentationMood?: string;
   }) => {
     if (!attendee) return;
 

@@ -115,12 +115,12 @@ const ContactUs: React.FC = () => {
             />
           </div>
           <a 
-            href="https://www.facebook.com/ICERIE2023" 
+            href="https://www.facebook.com/icerie2025/" 
             target="_blank"
             rel="noopener noreferrer"
             className="text-lg md:text-xl text-gray-700 hover:text-red-500 transition-colors duration-300 font-medium"
           >
-            Facebook Page
+            Icerie 2025
           </a>
           </div>
           

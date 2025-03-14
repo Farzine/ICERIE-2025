@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
             <FaWhatsapp className="w-8 h-8 md:w-10 md:h-10" />
           </a>
           <a
-            href="https://www.facebook.com/ICERIE2023"
+            href="https://www.facebook.com/icerie2025/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-blue-500 transition"

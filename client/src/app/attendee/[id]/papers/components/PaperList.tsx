@@ -9,9 +9,9 @@ interface PaperInterface {
   proceedingsPublication: string;
   fullPaperPublication: string;
   presentationType: string;
-  presentationMood: string;
   payment_status: boolean;
   val_id?: string;
+  presentationMood?: string;
 }
 
 interface PaperListProps {

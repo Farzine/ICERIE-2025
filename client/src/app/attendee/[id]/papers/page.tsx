@@ -365,17 +365,22 @@ export default function AttendeePapersPage({
                 )}
                 {!showAddForm &&
                   (attendee.category === "Local Delegates (Participant)" ? (
-                    <p className="text-black-500 font-bold text-3xl">
-                      As a{" "}
+                    <p className="text-black-500 font-bold text-2xl">
+                      You must choose{" "}
                       <span className="text-red-500">
-                        Local Delegate (Participant)
+                        {" "}
+                        paper ID &apos;000&apos;
+                      </span>{" "}
+                      as a &apos;{" "}
+                      <span className="text-red-500">
+                        Local Delegates (Participants)
                       </span>
-                      , you must submit a paper <span className="text-red-500"> (Click on Add Paper)</span> with the Paper ID set to{" "}
-                      <span className="text-red-500">&apos;Registration&apos;</span>.
-                      Other fields can be filled with random values. If you are
-                      interested in the tour, please select &quot;Yes&quot; in the Tour
-                      Interest field. Finally, you must complete the <span className="text-red-500">payment</span>  for
-                      the paper submission.
+                      &apos; and fill out the remaining forms at random{" "}
+                      <span className="text-red-500">
+                        {" "}
+                        (except make your selection in the Tour field, though)
+                      </span>
+                      .
                     </p>
                   ) : (
                     <button

@@ -360,16 +360,32 @@ export default function AttendeePapersPage({
           <div className="p-6">
             {attendee.papers.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
-                <p>You haven&apos;t added any papers yet.</p>
-                {!showAddForm && (
-                  <button
-                    onClick={() => setShowAddForm(true)}
-                    className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors inline-flex items-center gap-2"
-                  >
-                    <PlusCircle size={18} />
-                    <span>Add Your First Paper</span>
-                  </button>
+                {attendee.category != "Local Delegates (Participant)" && (
+                  <p>You haven&apos;t added any papers yet.</p>
                 )}
+                {!showAddForm &&
+                  (attendee.category === "Local Delegates (Participant)" ? (
+                    <p className="text-black-500 font-bold text-3xl">
+                      As a{" "}
+                      <span className="text-red-500">
+                        Local Delegate (Participant)
+                      </span>
+                      , you must submit a paper <span className="text-red-500"> (Click on Add Paper)</span> with the Paper ID set to{" "}
+                      <span className="text-red-500">&apos;Registration&apos;</span>.
+                      Other fields can be filled with random values. If you are
+                      interested in the tour, please select &quot;Yes&quot; in the Tour
+                      Interest field. Finally, you must complete the <span className="text-red-500">payment</span>  for
+                      the paper submission.
+                    </p>
+                  ) : (
+                    <button
+                      onClick={() => setShowAddForm(true)}
+                      className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors inline-flex items-center gap-2"
+                    >
+                      <PlusCircle size={18} />
+                      <span>Add Your First Paper</span>
+                    </button>
+                  ))}
               </div>
             ) : (
               <PaperList

@@ -257,9 +257,17 @@ export default function ProfessionalProfilePage({
     <div className="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-red-500 transition-all duration-300">
       <div className="bg-red-500 p-5 text-white flex justify-between items-center">
         <h2 className="text-3xl font-semibold">Profile Information</h2>
-        <button className="flex items-center gap-2 px-4 py-2 bg-white text-red-500 rounded-lg hover:bg-gray-100 transition " onClick={() => router.push(`/attendee/${params.id}/papers`)}>
+        <button
+          className="flex items-center gap-2 px-4 py-2 bg-white text-red-500 rounded-lg hover:bg-gray-100 transition "
+          onClick={() => router.push(`/attendee/${params.id}/papers`)}
+        >
           <PlusCircle size={18} className="mr-2" />
-          <span className="text-red-500">Add Paper</span>
+
+          {attendee.category === "Local Delegates (Participant)" ? (
+            <p>Pay Registration Fee</p>
+          ) : (
+            <span className="text-red-500">Add Paper</span>
+          )}
         </button>
       </div>
       <div className="p-6 md:p-8">
@@ -337,9 +345,16 @@ export default function ProfessionalProfilePage({
     <div className="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-red-500 transition-all duration-300">
       <div className="bg-red-500 p-5 flex justify-between items-center text-white">
         <h2 className="text-3xl font-semibold">Papers & Payment Details</h2>
-        <button className="flex items-center gap-2 px-4 py-2 bg-white text-red-500 rounded-lg hover:bg-gray-100 transition " onClick={() => router.push(`/attendee/${params.id}/papers`)}>
+        <button
+          className="flex items-center gap-2 px-4 py-2 bg-white text-red-500 rounded-lg hover:bg-gray-100 transition "
+          onClick={() => router.push(`/attendee/${params.id}/papers`)}
+        >
           <PlusCircle size={18} className="mr-2" />
-          <span className="text-red-500">Add Paper</span>
+          {attendee.category === "Local Delegates (Participant)" ? (
+            <p>Pay Registration Fee</p>
+          ) : (
+            <span className="text-red-500">Add Paper</span>
+          )}
         </button>
       </div>
       <div className="p-6 md:p-8">

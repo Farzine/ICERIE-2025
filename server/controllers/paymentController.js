@@ -1,6 +1,5 @@
 const request = require("request");
 const Attendee = require("../models/attendee");
-const PDFDocument = require("pdfkit");
 const axios = require("axios");
 const dotenv = require("dotenv");
 const earlyBirdDeadline = new Date("2025-03-25T23:59:59Z");

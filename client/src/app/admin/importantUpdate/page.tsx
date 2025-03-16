@@ -323,7 +323,7 @@ const ImportantUpdates: React.FC = () => {
         )}
         {isLoading && (
           <div className="text-center py-4 text-gray-500">
-            <div className="inline-block animate-spin rounded-full h-6 w-6 border-t-2 border-red-500 border-r-2 border-red-500 border-b-2 border-l-2 mr-2"></div>
+            <div className="inline-block animate-spin rounded-full h-6 w-6 border-t-2 border-red-500 border-r-2 border-b-2 border-l-2 mr-2"></div>
             Loading...
           </div>
         )}

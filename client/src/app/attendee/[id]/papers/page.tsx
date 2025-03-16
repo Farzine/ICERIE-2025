@@ -114,7 +114,7 @@ export default function AttendeePapersPage({
         `${BACKENDURL}/payments/${attendeeId}/paper/${paperKey}`
       );
       if (res.data.url) {
-        window.location.href = res.data.url;
+        if (typeof window !== "undefined") window.location.href = res.data.url;
       } else {
         alert("Payment URL not found");
       }

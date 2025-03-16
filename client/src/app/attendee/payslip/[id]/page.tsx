@@ -148,6 +148,7 @@ const PayslipPage = ({ params }: { params: { id: string } }) => {
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Publication</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Presentation</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Status</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Addi. Pages</th>
               </tr>
             </thead>
             <tbody>
@@ -163,6 +164,7 @@ const PayslipPage = ({ params }: { params: { id: string } }) => {
                       <span className="bg-yellow-50 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">Pending</span>
                     )}
                   </td>
+                  <td className="border border-slate-200 px-4 py-3 text-slate-600">{paperData.additionalPage}</td>
                 </tr>
               ) : (
                 <tr>

@@ -33,16 +33,22 @@ exports.initiatePayment = async (req, res) => {
     // 3) Calculate the amount to charge for this paper
     const currentDate = new Date();
     // Calculate amount based on the current date and deadline
-    const amount = (() => {
-      if (currentDate <= earlyBirdDeadline) {
-        return attendee.early_bird_fee;
-      } else if (currentDate <= regularDeadline) {
-        return attendee.regular_fee;
-      } else {
-        // Instead of returning directly, we'll throw so we can catch it
-        throw new Error("Payment deadline has passed");
-      }
-    })();
+    let baseFee;
+
+    if (currentDate <= earlyBirdDeadline) {
+      baseFee = attendee.early_bird_fee;
+    } else if (currentDate <= regularDeadline) {
+      baseFee = attendee.regular_fee;
+    } else {
+      return res.status(400).json({ error: "Payment deadline has passed" });
+    }
+
+    // ✅ Add extra charge for additional pages for this paper
+    const additionalPageFee = paper.additionalPage ? paper.additionalPage * 1000 : 0;
+    const amount = baseFee + additionalPageFee;
+
+    console.log(`Payment Amount for Paper ${paperId}: ${amount} BDT`);
+
 
     // Handle deadline passed case
     if (!amount) {

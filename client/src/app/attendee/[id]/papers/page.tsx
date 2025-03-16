@@ -6,7 +6,6 @@ import Navbar from "@/components/NavBar";
 import axios from "axios";
 import { PlusCircle, X } from "lucide-react";
 import Image from "next/image";
-import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -28,6 +27,7 @@ interface PaperInterface {
   payment_status: boolean;
   val_id?: string;
   presentationMood?: string;
+  additionalPage?: number;
 }
 
 interface AttendeeInterface {
@@ -86,6 +86,7 @@ export default function AttendeePapersPage({
     visaSupport?: string;
     tourInterested?: boolean;
     presentationMood?: string;
+    additionalPage?: number;
   }) => {
     if (!attendee) return;
 

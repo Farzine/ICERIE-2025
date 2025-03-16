@@ -10,6 +10,7 @@ interface PaperInterface {
   fullPaperPublication: string;
   presentationType: string;
   payment_status: boolean;
+  additionalPage?: number;
   val_id?: string;
   presentationMood?: string;
 }
@@ -45,7 +46,7 @@ export default function PaperList({
           key={paper.paperId}
           className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow p-5"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2">
               <h3 className="font-bold text-2xl text-gray-800 mb-3">
                 Paper ID: {paper.paperId}
@@ -66,6 +67,16 @@ export default function PaperList({
                       {paper.presentationType}
                     </span>
                   </p>
+                  { (
+                    <p className="flex items-baseline">
+                      <span className="font-medium text-gray-700 w-32 text-xl">
+                        Addi. Pages:
+                      </span>
+                      <span className="text-gray-800 text-xl">
+                        {paper.additionalPage}
+                      </span>
+                    </p>
+                  )}
                 </div>
                 <div>
                   <p className="flex items-baseline">
@@ -86,7 +97,7 @@ export default function PaperList({
                   </p>
                   <p className="flex items-baseline">
                     <span className="font-medium text-gray-700 w-32 text-xl">
-                      will be presented:
+                      Presentation:
                     </span>
                     <span className="text-gray-800 text-xl">
                       {paper.presentationMood}
@@ -187,6 +198,11 @@ export default function PaperList({
                     amount = fees.regular; // Use regular fee but mark as late
                   }
 
+                  const additionalPageFee = paper.additionalPage
+                    ? paper.additionalPage * 1000
+                    : 0;
+                  const TotalAmount = amount + additionalPageFee;
+
                   return (
                     <div>
                       <div className="flex justify-between items-center">
@@ -204,7 +220,7 @@ export default function PaperList({
                       <div className="flex justify-between items-center mt-2">
                         <span className="text-gray-600">Payable Amount:</span>
                         <span className="font-bold text-gray-800">
-                          {amount.toLocaleString()} {fees.currency}
+                          {TotalAmount.toLocaleString()} {fees.currency}
                           {isForeign && (
                             <span className="ml-2 text-lg font-semibold text-gray-500">
                               (

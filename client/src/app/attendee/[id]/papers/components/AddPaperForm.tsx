@@ -16,6 +16,7 @@ interface AddPaperFormProps {
     visaSupport?: string;
     tourInterested?: boolean;
     presentationMood: string;
+    additionalPage?: number;
   }) => void;
 }
 
@@ -35,6 +36,7 @@ export default function AddPaperForm({
   const [fullPaperPublication, setFullPaperPublication] = useState("");
   const [presentationType, setPresentationType] = useState("");
   const [presentationMood, setPresentationMood] = useState("");
+  const [additionalPage, setAdditionalPage] = useState(0);
 
   // Only used if it's the first paper
   const [visaSupport, setVisaSupport] = useState("No");
@@ -52,11 +54,13 @@ export default function AddPaperForm({
       fullPaperPublication,
       presentationType,
       presentationMood,
+      additionalPage,
     };
     if (isFirstPaper) {
       newPaperData.visaSupport = visaSupport;
       newPaperData.tourInterested = tourInterested;
     }
+    console.log("New paper data:", newPaperData);
     // Call parent's callback
     onAddPaper(newPaperData);
 
@@ -69,6 +73,7 @@ export default function AddPaperForm({
     setVisaSupport("No");
     setPresentationMood("");
     setTourInterested(false);
+    setAdditionalPage(0);
   };
 
   // Descriptions for each field
@@ -82,6 +87,8 @@ export default function AddPaperForm({
     visaSupport: "Do you need visa support letter? (foreign delegates)",
     tourInterested:
       'An attractive tour will be arranged for delegates and accompanying persons to a beautiful location in Sylhet named "SADA PATHOR" in Volagonj. It is adjacent to the Indian boarder. The location is one-hour travelling distance from conference venue. Those who want to participate in the tour must registrar separately paying the required fees: BDT 1500 for Adults and BDT 1000 for Children above three years. Payment should make in cash during conference',
+    additionalPage:
+      "Registration fee covers a paper with 6 pages only. For additional each page the author should pay 1000 BDT per page.",
   };
 
   return (
@@ -228,10 +235,31 @@ export default function AddPaperForm({
                 <option value="physical">Physical</option>
                 <option value="online">Online</option>
               </select>
-
-             
             </div>
           </div>
+
+          {/* Additional Page */}
+          <div className="flex flex-col">
+            <label className="mb-2 font-medium text-gray-700">
+              Additional Page
+              <span className="text-red-500">*</span>
+            </label>
+            <div className="space-y-3">
+              <input
+                type="number"
+                min={0}
+                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                value={additionalPage}
+                onChange={(e) => setAdditionalPage(Number(e.target.value))}
+                placeholder="Enter additional page count"
+              />
+
+              <div className="text-base md:text-lg bg-gray-50 p-2 md:p-3 border-l-4 border-red-500 rounded transition-all duration-200 opacity-100 max-h-40 md:max-h-60 overflow-y-auto">
+                {fieldDescriptions.additionalPage}
+              </div>
+            </div>
+          </div>
+
           {/* If first paper => visaSupport, tourInterested */}
           {isFirstPaper && (
             <>

@@ -36,14 +36,17 @@ const paperSchema = new mongoose.Schema({
   presentationMood: {
     type: String,
     enum: ["physical", "online"],
+    default: "physical",
     required: true,
   },
   payment_status: {
     type: Boolean,
     default: false,
   },
-  transaction_id: {
-    type: String,
+  additionalPage: {
+    type: Number,
+    default: 0,
+    required: true,
   },
   payment_date: {
     type: Date,

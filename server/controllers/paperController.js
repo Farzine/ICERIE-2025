@@ -11,6 +11,7 @@ const addPaperToAttendee = async (req, res) => {
           proceedingsPublication,
           fullPaperPublication,
           presentationType,
+          additionalPage,
           // Only used if first paper
           visaSupport,
           tourInterested,
@@ -39,6 +40,7 @@ const addPaperToAttendee = async (req, res) => {
           fullPaperPublication,
           presentationType,
           presentationMood,
+          additionalPage,
         };
     
         // Add it to the attendee’s papers array

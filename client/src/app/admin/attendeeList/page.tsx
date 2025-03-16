@@ -47,6 +47,7 @@ interface Paper {
   payment_status: boolean;
   payment_date?: string;
   val_id?: string;
+  additionalPage?: number;
 }
 
 interface Attendee {
@@ -143,6 +144,7 @@ const AttendeePage: React.FC = () => {
       "Full Paper",
       "Presentation Type",
       "Presentation Mode",
+      "Additional Page",
       "Payment Status",
       "Payment Date",
       "Val ID",
@@ -190,6 +192,7 @@ const AttendeePage: React.FC = () => {
         paper.fullPaperPublication,
         paper.presentationType,
         paper.presentationMood,
+        paper.additionalPage || "0",
         paper.payment_status ? "Paid" : "Not Paid",
         paper.payment_date || "",
         paper.val_id || "",
@@ -205,7 +208,7 @@ const AttendeePage: React.FC = () => {
         if (status === "Not Paid") return 1;
         return 2;
       };
-      return getOrder(a[14]) - getOrder(b[14]);
+      return getOrder(String(a[15])) - getOrder(String(b[15]));
     });
 
     return [headers, ...rows].map((row) => row.join(",")).join("\n");
@@ -245,6 +248,7 @@ const AttendeePage: React.FC = () => {
       "Full Paper",
       "Presentation Type",
       "Presentation Mode",
+      "Additional Page",
       "Payment Status",
       "Payment Date",
       "Val ID",
@@ -290,6 +294,7 @@ const AttendeePage: React.FC = () => {
         paper.fullPaperPublication,
         paper.presentationType,
         paper.presentationMood,
+        paper.additionalPage || "0",
         paper.payment_status ? "Paid" : "Not Paid",
         paper.payment_date || "",
         paper.val_id || "",
@@ -304,7 +309,7 @@ const AttendeePage: React.FC = () => {
         if (status === "Not Paid") return 1;
         return 2;
       };
-      return getOrder(a[14]) - getOrder(b[14]);
+      return getOrder(String(a[15])) - getOrder(String(b[15]));
     });
 
     // Prepare worksheet data (headers + sorted rows).
@@ -439,6 +444,7 @@ const AttendeePage: React.FC = () => {
       "Full Paper",
       "Presentation Type",
       "Presentation Mode",
+      "Additional Page",
       "Payment Status",
       "Payment Date",
       "Val ID",
@@ -475,6 +481,7 @@ const AttendeePage: React.FC = () => {
       paper.fullPaperPublication,
       paper.presentationType,
       paper.presentationMood,
+      paper.additionalPage || "0",
       "Paid", // This will always be "Paid" now
       paper.payment_date || "",
       paper.val_id || "",
@@ -488,7 +495,7 @@ const AttendeePage: React.FC = () => {
         if (status === "Not Paid") return 1;
         return 2;
       };
-      return getOrder(a[14]) - getOrder(b[14]);
+      return getOrder(String(a[15])) - getOrder(String(b[15]));
     });
   
     // Prepare worksheet data (headers + sorted rows).
@@ -647,6 +654,9 @@ const AttendeePage: React.FC = () => {
                         Presentation Mode
                       </TableCell>
                       <TableCell className="font-semibold text-sm text-gray-700">
+                        Addi. Pages
+                      </TableCell>
+                      <TableCell className="font-semibold text-sm text-gray-700">
                         Payment Status
                       </TableCell>
                       <TableCell className="font-semibold text-sm text-gray-700">
@@ -682,6 +692,9 @@ const AttendeePage: React.FC = () => {
                           </TableCell>
                           <TableCell className="border-t border-gray-200 text-sm">
                             {paper.presentationMood}
+                          </TableCell>
+                          <TableCell className="border-t border-gray-200 text-sm">
+                            {paper.additionalPage}
                           </TableCell>
                           <TableCell className="border-t border-gray-200 text-sm">
                             <span

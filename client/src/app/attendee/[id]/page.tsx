@@ -16,7 +16,7 @@ interface Paper {
   fullPaperPublication: string;
   presentationType: string;
   payment_status: boolean;
-  transaction_id?: string;
+  additionalPage?: number;
   val_id?: string;
 }
 
@@ -87,7 +87,7 @@ export default function ProfessionalProfilePage({
         `${BACKENDURL}/payments/${params.id}/paper/${paperKey}`
       );
       if (res.data.url) {
-        window.location.href = res.data.url;
+        if (typeof window !== "undefined") window.location.href = res.data.url;
       } else {
         alert("Payment URL not found");
       }
@@ -410,7 +410,7 @@ export default function ProfessionalProfilePage({
                   </div>
 
                   <div className="p-5 space-y-5">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-8">
                       <div>
                         <div className="font-medium text-gray-800 mb-1">
                           Track:
@@ -441,16 +441,22 @@ export default function ProfessionalProfilePage({
                           {paper.fullPaperPublication}
                         </div>
                       </div>
-                      {paper.val_id && (
-                        <div className="md:col-span-2">
-                          <div className="font-medium text-gray-800 mb-1">
-                            Validation ID:
-                          </div>
-                          <div className="font-mono text-gray-600 bg-gray-50 p-2 rounded border border-gray-100">
-                            {paper.val_id}
-                          </div>
+                      <div>
+                        <div className="font-medium text-gray-800 mb-1">
+                          Additional Pages:
                         </div>
-                      )}
+                        <div className="text-gray-600">
+                          {paper.additionalPage}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-800 mb-1">
+                          Validation ID:
+                        </div>
+                        <div className="text-gray-600">
+                          {paper.val_id || "N/A"}
+                        </div>
+                      </div>
                     </div>
                     {/* Payment Amount Information */}
                     {!isPaid && (
@@ -531,6 +537,11 @@ export default function ProfessionalProfilePage({
                               amount = fees.regular; // Use regular fee but mark as late
                             }
 
+                            const additionalPageFee = paper.additionalPage
+                              ? paper.additionalPage * 1000
+                              : 0;
+                            const TotalAmount = amount + additionalPageFee;
+
                             return (
                               <div>
                                 <div className="flex justify-between items-center">
@@ -552,7 +563,7 @@ export default function ProfessionalProfilePage({
                                     Payable Amount:
                                   </span>
                                   <span className="font-bold text-gray-800">
-                                    {amount.toLocaleString()} {fees.currency}
+                                    {TotalAmount.toLocaleString()} {fees.currency}
                                     {isForeign && (
                                       <span className="ml-2 text-lg font-semibold text-gray-500">
                                         (

@@ -208,7 +208,7 @@ const UploadImagePage: React.FC = () => {
                     />
                     <button
                         type="submit"
-                        className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 w-full md:w-40"
+                        className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 w-full md:w-40"
                         disabled={loading}
                     >
                         {loading ? 'Uploading...' : 'Upload Image'}

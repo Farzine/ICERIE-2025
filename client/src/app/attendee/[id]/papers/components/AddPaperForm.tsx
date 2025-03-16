@@ -74,7 +74,7 @@ export default function AddPaperForm({
   // Descriptions for each field
   const fieldDescriptions = {
     proceedingsPublication:
-      "(Only for papers accepted for oral presentation) Please note that if you are interested for published in our proceeding (which might be indexed by Google Scholar, Dimensions, CNKI, Wanfang Data, CPCI (WOS, if applicable), Compendex (if applicable), Scopus etc) additional 50 Euro + Service charge (BDT 7500) will be added. A separate email will send to all authors regarding this publication. The publisher is Atlantis Press (part of Springer Nature)",
+      "(Only for papers accepted for oral presentation) Please note that if you are interested for published in our proceeding, an additional service charge (BDT 7500) will be added. A separate email will send to all authors regarding this publication. The publisher is Atlantis Press (part of Springer Nature)",
     fullPaperPublication:
       "The softcopy of the full paper may be distributed in Pen drive (included in registration fee)",
     presentationType:

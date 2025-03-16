@@ -49,115 +49,86 @@ const Sidebar: React.FC = () => {
     return (
         <>
             {/* Mobile menu button */}
-            <div className="md:hidden p-4">
+            <div className="fixed top-0 left-0 z-50 p-4 md:hidden">
                 <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="text-2xl"
+                    className="flex items-center justify-center w-10 h-10 bg-white rounded-md shadow-md text-red-400 hover:bg-gray-100 transition-colors"
+                    aria-label={isSidebarOpen ? "Close menu" : "Open menu"}
                 >
-                    {isSidebarOpen ? <FiX /> : <FiMenu />}
+                    {isSidebarOpen ? <FiX className="w-5 h-5" /> : <FiMenu className="w-5 h-5" />}
                 </button>
             </div>
 
             {/* Sidebar */}
-            <div
-                className={`fixed h-full bg-[#a8c1c1] w-64 py-8 px-4 flex flex-col items-center transform ${
+            <aside
+                className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 w-72 flex flex-col shadow-xl transform ${
                     isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-                } transition-transform duration-300 ease-in-out md:translate-x-0 md:relative z-50 overflow-y-auto h-screen`}
-                style={{ backgroundColor: '#a8c1c1' }}
+                } transition-transform duration-300 ease-in-out md:translate-x-0 md:relative z-40 overflow-y-auto`}
             >
-                <div className="text-2xl font-bold mb-8">Hello, Admin</div>
-                <div className="flex flex-col space-y-1 w-full">
-                    <div
-                        onClick={() => handleNavigation('/admin/notices')}
-                        className={`flex items-center space-x-3 cursor-pointer hover:text-green-600 p-5 rounded ${getActiveClass('/admin/notices')}`}
-                    >
-                        <FaBell className="h-6 w-6" />
-                        <span>Notice</span>
+                <div className="flex flex-col h-full">
+                    {/* Header */}
+                    <div className="p-6 border-b border-gray-200 bg-red-400 text-white">
+                        <h2 className="text-2xl font-bold">Admin Dashboard</h2>
                     </div>
-                    <div
-                        onClick={() => handleNavigation('/admin/messages')}
-                        className={`flex items-center space-x-3 cursor-pointer hover:text-green-600 p-5 rounded ${getActiveClass('/admin/messages')}`}
-                    >
-                        <FaMessage className="h-6 w-6" />
-                        <span>Chair Message</span>
-                    </div>
-                    <div
-                        onClick={() => handleNavigation('/admin/uploadImage')}
-                        className={`flex items-center space-x-3 cursor-pointer hover:text-green-600 p-5 rounded ${getActiveClass('/admin/uploadImage')}`}
-                    >
-                        <FaImage className="h-6 w-6" />
-                        <span>Image</span>
-                    </div>
-                    <div
-                        onClick={() => handleNavigation('/admin/sponsor')}
-                        className={`flex items-center space-x-3 cursor-pointer hover:text-green-600 p-5 rounded ${getActiveClass('/admin/sponsor')}`}
-                    >
-                        <FaHandshake className="h-6 w-6" />
-                        <span>Sponsors</span>
-                    </div>
-                    <div
-                        onClick={() => handleNavigation('/admin/importantDates')}
-                        className={`flex items-center space-x-3 cursor-pointer hover:text-green-600 p-5 rounded ${getActiveClass('/admin/importantDates')}`}
-                    >
-                        <FaCalendarCheck className="h-6 w-6" />
-                        <span>Important Dates</span>
-                    </div>
-                    <div
-                        onClick={() => handleNavigation('/admin/importantUpdate')}
-                        className={`flex items-center space-x-3 cursor-pointer hover:text-green-600 p-5 rounded ${getActiveClass('/admin/importantUpdate')}`}
-                    >
-                        <FaNoteSticky className="h-6 w-6" />
-                        <span>Important Update</span>
-                    </div>
-                    <div
-                        onClick={() => handleNavigation('/admin/schedule')}
-                        className={`flex items-center space-x-3 cursor-pointer hover:text-green-600 p-5 rounded ${getActiveClass('/admin/schedule')}`}
-                    >
-                        <RiTimerLine className="h-6 w-6" />
-                        <span>Schedule</span>
-                    </div>
-                    <div
-                        onClick={() => handleNavigation('/admin/sessionList')}
-                        className={`flex items-center space-x-3 cursor-pointer hover:text-green-600 p-5 rounded ${getActiveClass('/admin/sessionList')}`}
-                    >
-                        <RiListCheck className="h-6 w-6" />
-                        <span>Session List</span>
-                    </div>
-                    <div
-                        onClick={() => handleNavigation('/admin/attendeeList')}
-                        className={`flex items-center space-x-3 cursor-pointer hover:text-green-600 p-5 rounded ${getActiveClass('/admin/attendeeList')}`}
-                    >
-                        <FaPeopleGroup className="h-6 w-6" />
-                        <span>Attendee List</span>
-                    </div>
-                    <div
-                        onClick={() => handleNavigation('/admin/updateEmailPassword')}
-                        className={`flex items-center space-x-3 cursor-pointer hover:text-green-600 p-5 rounded ${getActiveClass('/admin/updateEmailPassword')}`}
-                    >
-                        <FaEnvelope className="h-6 w-6" />
-                        <span>Change Email and Password</span>
+                    
+                    {/* Navigation links */}
+                    <nav className="flex-1 overflow-y-auto py-4 px-3">
+                        <div className="flex flex-col space-y-1">
+                            {[
+                            { path: '/admin/notices', icon: <FaBell />, label: 'Notice' },
+                            { path: '/admin/messages', icon: <FaMessage />, label: 'Chair Message' },
+                            { path: '/admin/uploadImage', icon: <FaImage />, label: 'Image' },
+                            { path: '/admin/sponsor', icon: <FaHandshake />, label: 'Sponsors' },
+                            { path: '/admin/importantDates', icon: <FaCalendarCheck />, label: 'Important Dates' },
+                            { path: '/admin/importantUpdate', icon: <FaNoteSticky />, label: 'Important Update' },
+                            { path: '/admin/schedule', icon: <RiTimerLine />, label: 'Schedule' },
+                            { path: '/admin/sessionList', icon: <RiListCheck />, label: 'Session List' },
+                            { path: '/admin/attendeeList', icon: <FaPeopleGroup />, label: 'Attendee List' },
+                            { path: '/admin/updateEmailPassword', icon: <FaEnvelope />, label: 'Settings' },
+                            ].map((item) => (
+                                <div
+                                    key={item.path}
+                                    onClick={() => handleNavigation(item.path)}
+                                    className={`flex items-center space-x-3 cursor-pointer rounded-md px-4 py-3 transition-all ${
+                                        pathname === item.path 
+                                            ? 'bg-red-400 text-white font-medium' 
+                                            : 'hover:bg-gray-100 text-gray-700'
+                                    }`}
+                                >
+                                    <span className={`text-lg ${pathname === item.path ? 'text-white' : 'text-red-500'}`}>
+                                        {item.icon}
+                                    </span>
+                                    <span className="font-medium">{item.label}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </nav>
+                    
+                    {/* Footer with logout */}
+                    <div className="p-4 border-t border-gray-200 bg-gray-50">
+                        {loggingOut ? (
+                            <div className="flex items-center justify-center space-x-3 py-2">
+                                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-red-500"></div>
+                                <span className="text-gray-800">Logging out...</span>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={handleLogout}
+                                className="w-full py-2.5 px-4 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all flex items-center justify-center font-medium shadow-sm"
+                            >
+                                Log Out
+                            </button>
+                        )}
                     </div>
                 </div>
-                {loggingOut ? (
-                    <div className="mt-5 flex items-center space-x-4">
-                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
-                        <span className="text-black">Logging out...</span>
-                    </div>
-                ) : (
-                    <button
-                        onClick={handleLogout}
-                        className="mt-5 py-2 px-4 border border-green-600 text-black rounded hover:bg-green-600 hover:text-white"
-                    >
-                        Log Out
-                    </button>
-                )}
-            </div>
+            </aside>
 
             {/* Overlay for mobile view */}
             {isSidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-black bg-opacity-50 md:hidden"
+                    className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
                     onClick={() => setIsSidebarOpen(false)}
+                    aria-hidden="true"
                 ></div>
             )}
         </>

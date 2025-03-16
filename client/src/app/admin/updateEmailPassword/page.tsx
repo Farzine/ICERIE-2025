@@ -71,7 +71,7 @@ const EmailPage = () => {
             onChange={(e) => setNewPassword(e.target.value)}
             className="border border-gray-300 p-2 rounded"
           />
-          <button type="submit" className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 w-full md:w-20">Save</button>
+          <button type="submit" className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 w-full md:w-20">Save</button>
         </form>
 
         {/* Success message display */}

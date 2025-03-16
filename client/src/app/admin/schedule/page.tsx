@@ -205,129 +205,178 @@ const Schedule: React.FC = () => {
     setEditId(null);
   };
 
+  const [activeTab, setActiveTab] = useState('schedule');
+  
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
       <Sidebar />
       {loading && (
-                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-700 bg-opacity-50 z-50">
-                    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-                </div>
-            )}
-      <div className={`flex-1 p-4 md:p-8 overflow-y-auto bg-gray-100 h-screen ${loading ? 'filter blur-sm' : ''}`}>
-        <h1 className="text-2xl md:text-3xl font-bold mb-4">Schedule Management</h1>
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-60 z-50">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-red-600"></div>
+        </div>
+      )}
+      <div className={`flex-1 p-5 md:p-8 overflow-y-auto bg-gray-50 h-screen transition-all ${loading ? 'filter blur-sm' : ''}`}>
+        <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800 border-b pb-3">Schedule Management</h1>
 
-        {scheduleItems.length === 0 && <p>No schedule items found</p>}
+        <div className="mb-6 flex flex-col sm:flex-row gap-4">
+          <button
+            onClick={() => setActiveTab('schedule')}
+            className={`py-3 px-6 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 
+              ${activeTab === 'schedule' ? 'bg-red-500 text-white shadow-md' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'}`}
+          >
+            View Schedule
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('addUpdate');
+              if (editId) handleCancelEdit();
+            }}
+            className={`py-3 px-6 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 
+              ${activeTab === 'addUpdate' ? 'bg-red-500 text-white shadow-md' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'}`}
+          >
+            {editId ? "Update Schedule" : "Add Schedule"}
+          </button>
+        </div>
+
         {error && (
-          <div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
-            role="alert"
-          >
-            <strong className="font-bold">Error!</strong>
-            <span className="block sm:inline"> {error}</span>
+          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6 shadow-sm" role="alert">
+            <p className="font-medium">Error</p>
+            <p>{error}</p>
           </div>
         )}
+        
         {success && (
-          <div
-            className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
-            role="alert"
-          >
-            <strong className="font-bold">Success!</strong>
-            <span className="block sm:inline"> Operation successful.</span>
+          <div className="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-6 shadow-sm" role="alert">
+            <p className="font-medium">Success</p>
+            <p>Operation completed successfully.</p>
           </div>
         )}
 
-        <div className="flex flex-col space-y-2">
-          <DatePicker
-            selected={date}
-            onChange={(date: Date | null) => setDate(date)}
-            dateFormat="dd MMMM, yyyy"
-            placeholderText="Select a date"
-            className="p-2 border rounded"
-            popperPlacement="bottom-start"
-          />
-          <textarea
-            placeholder="Session"
-            value={session}
-            onChange={(e) => setSession(e.target.value)}
-            className="p-2 border rounded w-full md:w-1/3"
-          ></textarea>
-          
-          <label className="block font-bold">Start Time</label>
-          <TimePicker
-            onChange={(start_time: string | null) => setStartTime(start_time)}
-            value={start_time}
-            className="p-2 rounded w-full md:w-1/5 border-4 border-white"
-            disableClock
-            format="h:mm a"
-          />
-          
-          <label className="block font-bold">End Time</label>
-          <TimePicker
-            onChange={(end_time: string | null) => setEndTime(end_time)}
-            value={end_time}
-            className="p-2 rounded w-full md:w-1/5 border-4 border-white"
-            disableClock
-            format="h:mm a"
-          />
+        {activeTab === 'addUpdate' && (
+          <div className="mb-8 p-6 bg-white rounded-lg shadow-sm">
+            <h2 className="text-xl font-semibold mb-4 text-gray-700">{editId ? "Edit Schedule Item" : "Add New Schedule Item"}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <DatePicker
+                  selected={date}
+                  onChange={(date: Date | null) => setDate(date)}
+                  dateFormat="dd MMMM, yyyy"
+                  placeholderText="Select a date"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                  popperPlacement="bottom-start"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Session</label>
+                <textarea
+                  placeholder="Session description"
+                  value={session}
+                  onChange={(e) => setSession(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                  rows={2}
+                ></textarea>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+                <TimePicker
+                  onChange={(start_time: string | null) => setStartTime(start_time)}
+                  value={start_time}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                  disableClock
+                  format="h:mm a"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">End Time</label>
+                <TimePicker
+                  onChange={(end_time: string | null) => setEndTime(end_time)}
+                  value={end_time}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                  disableClock
+                  format="h:mm a"
+                />
+              </div>
+            </div>
 
-          <div className="flex space-x-2">
-            <button
-              onClick={editId ? handleEditScheduleItem : handleAddScheduleItem}
-              className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 w-40"
-            >
-              {editId ? "Update Schedule" : "Add Schedule"}
-            </button>
-            {editId && (
+            <div className="flex flex-wrap gap-3 mt-4">
               <button
-                onClick={handleCancelEdit}
-                className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 w-40"
+                onClick={editId ? handleEditScheduleItem : handleAddScheduleItem}
+                className="bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
               >
-                Cancel
+                {editId ? "Update Schedule" : "Add Schedule"}
               </button>
+              {editId && (
+                <button
+                  onClick={handleCancelEdit}
+                  className="bg-gray-500 text-white py-2 px-6 rounded-md hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'schedule' && (
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <h2 className="text-xl font-semibold p-4 border-b text-gray-700">Schedule Items</h2>
+            
+            {isLoading ? (
+              <div className="p-8 text-center text-gray-500">
+                <div className="animate-spin inline-block h-8 w-8 border-4 border-gray-300 border-t-red-600 rounded-full mb-2"></div>
+                <p>Loading schedule data...</p>
+              </div>
+            ) : scheduleItems.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">No schedule items found</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Session</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Time</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Time</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {scheduleItems.map((item) => (
+                      <tr key={item._id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {moment(item.date).format("DD MMMM, YYYY")}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{item.session}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{moment(item.start_time, "HH:mm").format("h:mm A")}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{moment(item.end_time, "HH:mm").format("h:mm A")}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => {
+                                handleEditClick(item);
+                                setActiveTab('addUpdate');
+                              }}
+                              className="inline-flex items-center px-3 py-1.5 border border-red-500 text-red-500 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteScheduleItem(item._id)}
+                              className="inline-flex items-center px-3 py-1.5 border border-gray-600 text-gray-600 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
-        </div>
-
-        <div className="mt-8 overflow-x-auto">
-          <table className="min-w-full bg-white border">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border">Date</th>
-                <th className="py-2 px-4 border">Session</th>
-                <th className="py-2 px-4 border">Start Time</th>
-                <th className="py-2 px-4 border">End Time</th>
-                <th className="py-2 px-4 border">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {scheduleItems.map((item) => (
-                <tr key={item._id} className="text-center">
-                  <td className="py-2 px-4 border">
-                    {moment(item.date).format("DD MMMM, YYYY")}
-                  </td>
-                  <td className="py-2 px-4 border">{item.session}</td>
-                  <td className="py-2 px-4 border">{moment(item.start_time, "HH:mm").format("h:mm A")}</td>
-                  <td className="py-2 px-4 border">{moment(item.end_time, "HH:mm").format("h:mm A")}</td>
-                  <td className="py-2 px-4 border space-x-2">
-                    <button
-                      onClick={() => handleEditClick(item)}
-                      className="text-black py-1 px-3 m-2 rounded hover:bg-green-600 border-2 border-green-600"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteScheduleItem(item._id)}
-                      className="text-black py-1 px-3 rounded hover:bg-red-600 border-2 border-red-600"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {isLoading && <div>Loading...</div>}
-        </div>
+        )}
       </div>
       <ScrollToTopButton />
     </div>

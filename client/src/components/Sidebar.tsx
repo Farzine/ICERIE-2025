@@ -67,7 +67,7 @@ const Sidebar: React.FC = () => {
             >
                 <div className="flex flex-col h-full">
                     {/* Header */}
-                    <div className="p-6 border-b border-gray-200 bg-red-400 text-white">
+                    <div className="p-6 border-b border-gray-200 bg-red-500 text-white">
                         <h2 className="text-2xl font-bold">Admin Dashboard</h2>
                     </div>
                     

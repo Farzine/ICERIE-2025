@@ -790,9 +790,9 @@ const AttendeePage: React.FC = () => {
         </div>
 
         {isLoading && (
-          <div className="bg-white p-4 rounded-md shadow-sm text-center">
-            Loading...
-          </div>
+          <>
+          
+          </>
         )}
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md text-red-700">

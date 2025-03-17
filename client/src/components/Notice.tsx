@@ -40,6 +40,7 @@ const Notices: React.FC = () => {
 
   return (
     <div className="w-full md:w-[330px] text-wrap my-10 border p-4 h-[400px]  bg-white rounded-lg md:shadow-xl">
+      <div className="flex items-center justify-between">
       <div className="flex items-center gap-2 mb-4">
         <h2 className="md:text-4xl text-3xl font-semibold mr-2">Notices</h2>
         <svg
@@ -69,41 +70,17 @@ const Notices: React.FC = () => {
           </defs>
         </svg>
       </div>
+      <div>
+      <span className="bg-red-600 text-sm rounded-full w-12 h-6 animate-bounce flex justify-center items-center text-white font-semibold">New</span>
+      </div>
+      </div>
       <ul className="overflow-y-scroll no-scrollbar px-5 w-full  md:w-[330px]  h-[340px]">
-        {Notices.filter((notice) => notice.show).map((notice) => (
+        {[...Notices].reverse().filter((notice: Notice) => notice.show).map((notice: Notice) => (
           <li
             key={notice.id}
             className="flex w-full  items-start mb-4 overflow-hidden hover:bg-slate-200 "
           >
-            <svg
-              width="25"
-              height="25"
-              viewBox="0 0 35 35"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlnsXlink="http://www.w3.org/1999/xlink"
-            >
-              <rect width="30" height="30" fill="url(#pattern0_829_505)" />
-              <defs>
-                <pattern
-                  id="pattern0_829_505"
-                  patternContentUnits="objectBoundingBox"
-                  width="1"
-                  height="1"
-                >
-                  <use
-                    xlinkHref="#image0_829_505"
-                    transform="scale(0.0078125)"
-                  />
-                </pattern>
-                <image
-                  id="image0_829_505"
-                  width="128"
-                  height="128"
-                  xlinkHref="data:imagepng;base64,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"
-                />
-              </defs>
-            </svg>
+           
             <div className="group  sm:max-w-[350px] hover:bg-slate-200 ml-5">
               <h3 className="text-2xl w-full sm:text-2xl font-semibold group-hover:bg-slate-200 text-red-500 overflow-wrap break-words whitespace-normal">
                 {notice.title}

@@ -99,12 +99,7 @@ export default function Home() {
         <Sponsors />
       </div>
 
-      {/* Organized By Section */}
-      <section className="organized-by py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <OrganizedBy />
-        </div>
-      </section>
+   
 
       {/* Footer Section */}
       <Footer />

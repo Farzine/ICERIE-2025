@@ -74,12 +74,12 @@ const LatestUpdates: React.FC = () => {
       <div className="w-full overflow-hidden py-2 md:py-4 flex items-center relative">
         <div className="flex whitespace-nowrap animate-scroll-slower ">
           {updates.length > 0 ? (
-        updates.map((update, index) => (
+        [...updates].reverse().map((update, index) => (
           <span
             key={index}
             className="mr-8 md:mr-12 flex items-center gap-1 md:gap-2 text-base md:text-2xl font-medium text-gray-800"
           >
-            <GoDotFill className="text-red-500 flex-shrink-0" />
+            <GoDotFill className="text-red-500 flex-shrink-0 " />
             {update}
           </span>
         ))

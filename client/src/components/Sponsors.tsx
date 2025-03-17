@@ -121,6 +121,9 @@ const SponsorsPage: React.FC = () => {
 
   return (
     <div className="bg-white min-h-screen">
+      <div className="my-">
+          <OrganizedBy />
+        </div>
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-center mr-28 items-center mt-28">
           <div className="pt-9 mr-4">
@@ -153,12 +156,10 @@ const SponsorsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="my-36">
-          <OrganizedBy />
-        </div>
-        {renderSponsorsByType("Media Partner")}
+        
         {renderSponsorsByType("Technical Partner")}
         {renderSponsorsByType("Supported By")}
+        {renderSponsorsByType("Media Partner")}
       </div>
       {error && <div>{error}</div>}
       {/* Carousel Section */}

@@ -424,8 +424,22 @@ const AttendeePage: React.FC = () => {
 
   // Count total number of paid papers
   const paidPapersCount = attendeePageItems.reduce((total, attendee) => {
-    const paidPapersForAttendee = attendee.papers.filter(paper => paper.payment_status).length;
+    const paidPapersForAttendee = attendee.papers.filter(
+      (paper) => paper.payment_status
+    ).length;
     return total + paidPapersForAttendee;
+  }, 0);
+
+  // Total amount paid for all paid papers
+  const totalPaidAmount = attendeePageItems.reduce((sum, attendee) => {
+    // Sum only the paid papers
+    const perAttendeeTotal = attendee.papers
+      .filter((paper) => paper.payment_status)
+      .reduce((paperSum, paper) => {
+        return paperSum + calculatePaidAmount(attendee, paper);
+      }, 0);
+
+    return sum + perAttendeeTotal;
   }, 0);
 
   const downloadPaidExcel = () => {
@@ -448,46 +462,55 @@ const AttendeePage: React.FC = () => {
       "Payment Status",
       "Payment Date",
       "Val ID",
+      "Amount",
     ];
-  
+
     // Filter attendees who have at least one paper marked as paid
     let paidAttendees = attendeePageItems.filter((attendee) =>
       attendee.papers.some((paper) => paper.payment_status)
     );
-  
+
     // Expand attendees: one row per paper. If no papers, include a single row with empty paper fields.
     let rows = paidAttendees.flatMap((attendee) => {
       // Filter to only include papers that are paid
-      const paidPapers = attendee.papers.filter(paper => paper.payment_status);
-      
+      const paidPapers = attendee.papers.filter(
+        (paper) => paper.payment_status
+      );
+
       if (paidPapers.length === 0) {
-      // If no paid papers, don't include this attendee in the Excel export
-      return [];
+        // If no paid papers, don't include this attendee in the Excel export
+        return [];
       }
-      
-      // Only map the paid papers
-      return paidPapers.map((paper) => [
-      attendee.name,
-      attendee.email,
-      attendee.university,
-      attendee.category,
-      attendee.phone,
-      attendee.photoUrl,
-      attendee.visaSupport,
-      attendee.tourInterested ? "Yes" : "No",
-      paper.paperId,
-      paper.track,
-      paper.proceedingsPublication,
-      paper.fullPaperPublication,
-      paper.presentationType,
-      paper.presentationMood,
-      paper.additionalPage || "0",
-      "Paid", // This will always be "Paid" now
-      paper.payment_date || "",
-      paper.val_id || "",
-      ]);
+
+      // Return an array of row arrays
+      return paidPapers.map((paper) => {
+        // Calculate the total amount for this row
+        const paidAmount = calculatePaidAmount(attendee, paper);
+
+        return [
+          attendee.name,
+          attendee.email,
+          attendee.university,
+          attendee.category,
+          attendee.phone,
+          attendee.photoUrl,
+          attendee.visaSupport,
+          attendee.tourInterested ? "Yes" : "No",
+          paper.paperId,
+          paper.track,
+          paper.proceedingsPublication,
+          paper.fullPaperPublication,
+          paper.presentationType,
+          paper.presentationMood,
+          paper.additionalPage || "0",
+          "Paid",
+          paper.payment_date || "",
+          paper.val_id || "",
+          paidAmount.toString(),
+        ];
+      });
     });
-  
+
     // Sort rows by Payment Status (column index 14).
     rows = rows.sort((a, b) => {
       const getOrder = (status: string) => {
@@ -497,29 +520,59 @@ const AttendeePage: React.FC = () => {
       };
       return getOrder(String(a[15])) - getOrder(String(b[15]));
     });
-  
+
+    // 3. Compute a grand total of the “Paid Amount” column
+    //    Remember that "Paid Amount" is the last column (index 18).
+    const grandTotal = rows.reduce((sum, row) => {
+      const paidAmountStr = row[18] || "0"; // safe-guard
+      return sum + Number(paidAmountStr);
+    }, 0);
+
     // Prepare worksheet data (headers + sorted rows).
     const worksheetData = [headers, ...rows];
-  
+    // 5. Add an extra row for the grand total at the bottom
+    //    (You can style or label these cells however you like.)
+    worksheetData.push([]);
+    worksheetData.push([
+      "", // keep empty cells for alignment
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "Grand Total", // label
+      grandTotal.toString(), // value
+    ]);
+
     // Create worksheet and workbook using XLSX.
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Attendees');
-  
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Attendees");
+
     // Write workbook as a binary array.
-    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+    const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([wbout], { type: "application/octet-stream" });
     const url = URL.createObjectURL(blob);
-  
+
     // Create a temporary link to trigger the download.
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = "paid_attendee_list.xlsx";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
-  
 
   /** ===========================
    *  COLLAPSIBLE ROW COMPONENT
@@ -660,6 +713,9 @@ const AttendeePage: React.FC = () => {
                         Payment Status
                       </TableCell>
                       <TableCell className="font-semibold text-sm text-gray-700">
+                        Amount
+                      </TableCell>
+                      <TableCell className="font-semibold text-sm text-gray-700">
                         Payment Date
                       </TableCell>
                       <TableCell className="font-semibold text-sm text-gray-700">
@@ -707,6 +763,93 @@ const AttendeePage: React.FC = () => {
                               {paper.payment_status ? "Paid" : "Unpaid"}
                             </span>
                           </TableCell>
+                          {/* //////////////////// */}
+
+                          {(() => {
+                            const earlyBirdDeadline = new Date(
+                              "2025-03-25T23:59:59Z"
+                            );
+                            const regularDeadline = new Date(
+                              "2025-04-10T23:59:59Z"
+                            );
+                            const currentDate = new Date();
+
+                            // Get fee structure based on attendee category
+                            const getFeeStructure = () => {
+                              switch (row.category) {
+                                case "Local Delegates (Author)":
+                                  return {
+                                    early: 6000,
+                                    regular: 7000,
+                                    currency: "BDT",
+                                  };
+                                case "Local Delegates (Participant)":
+                                  return {
+                                    early: 5000,
+                                    regular: 6000,
+                                    currency: "BDT",
+                                  };
+                                case "Local Students (Author/ Co-author)":
+                                  return {
+                                    early: 4000,
+                                    regular: 5000,
+                                    currency: "BDT",
+                                  };
+                                case "Foreign Delegates":
+                                  return {
+                                    early: 43750,
+                                    regular: 56250,
+                                    currency: "BDT",
+                                    usd_early: 350,
+                                    usd_regular: 450,
+                                  };
+                                case "Foreign Students":
+                                  return {
+                                    early: 25000,
+                                    regular: 31250,
+                                    currency: "BDT",
+                                    usd_early: 200,
+                                    usd_regular: 250,
+                                  };
+                                default:
+                                  return {
+                                    early: 5000,
+                                    regular: 6000,
+                                    currency: "BDT",
+                                  };
+                              }
+                            };
+
+                            const fees = getFeeStructure();
+                            const isForeign = row.category?.includes("Foreign");
+
+                            // Determine which fee applies
+                            let amount, phase;
+                            if (currentDate <= earlyBirdDeadline) {
+                              amount = fees.early;
+                              phase = "Early Bird";
+                            } else if (currentDate <= regularDeadline) {
+                              amount = fees.regular;
+                              phase = "Regular";
+                            } else {
+                              phase = "Late";
+                              amount = fees.regular; // Use regular fee but mark as late
+                            }
+
+                            const additionalPageFee = paper.additionalPage
+                              ? paper.additionalPage * 1000
+                              : 0;
+                            const TotalAmount = amount + additionalPageFee;
+
+                            return (
+                              <TableCell className="border-t border-gray-200 text-sm font-mono text-gray-600">
+                                {TotalAmount} {fees.currency}
+                              </TableCell>
+                            );
+                          })()}
+
+                          {/* /////////////////////// */}
+
                           <TableCell className="border-t border-gray-200 text-sm">
                             {paper.payment_date
                               ? new Date(
@@ -760,28 +903,43 @@ const AttendeePage: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center space-x-2">
               <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                <span className="text-green-600 text-lg font-bold">{paidPapersCount}</span>
+                <span className="text-green-600 text-lg font-bold">
+                  {paidPapersCount}
+                </span>
               </div>
-              <Typography variant="h6" className="text-gray-800 font-medium m-0">
+              <Typography
+                variant="h6"
+                className="text-gray-800 font-medium m-0"
+              >
                 Paid Papers
               </Typography>
             </div>
-            
+
+            {/* <-- Add totalPaidAmount display here --> */}
+            <div className="flex items-center space-x-2">
+              <Typography
+                variant="h6"
+                className="text-gray-800 font-medium m-0"
+              >
+                Grand Total Paid: {totalPaidAmount} BDT
+              </Typography>
+            </div>
+
             <Button
               variant="contained"
               onClick={downloadPaidExcel}
               startIcon={<i className="fas fa-download" />}
               className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white transition-all duration-300 transform hover:scale-105"
               sx={{
-                boxShadow: '0 4px 6px rgba(239, 68, 68, 0.25)',
-                borderRadius: '8px',
-                padding: '8px 16px',
-                textTransform: 'none',
-                fontSize: '0.9rem',
+                boxShadow: "0 4px 6px rgba(239, 68, 68, 0.25)",
+                borderRadius: "8px",
+                padding: "8px 16px",
+                textTransform: "none",
+                fontSize: "0.9rem",
                 fontWeight: 600,
-                '&:hover': {
-                  boxShadow: '0 6px 8px rgba(220, 38, 38, 0.3)',
-                }
+                "&:hover": {
+                  boxShadow: "0 6px 8px rgba(220, 38, 38, 0.3)",
+                },
               }}
             >
               Download Paid Papers List
@@ -789,11 +947,7 @@ const AttendeePage: React.FC = () => {
           </div>
         </div>
 
-        {isLoading && (
-          <>
-          
-          </>
-        )}
+        {isLoading && <></>}
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md text-red-700">
             {error}
@@ -991,3 +1145,68 @@ const AttendeePage: React.FC = () => {
 };
 
 export default AttendeePage;
+
+// You can place this anywhere outside your component (e.g., top of file).
+function calculatePaidAmount(attendee: Attendee, paper: Paper): number {
+  // For demonstration, we’ll replicate the same logic you used in the table:
+
+  // Deadlines
+  const earlyBirdDeadline = new Date("2025-03-25T23:59:59Z");
+  const regularDeadline = new Date("2025-04-10T23:59:59Z");
+
+  // If you want to base it on the paper.payment_date (when the user actually paid):
+  // If there's no payment_date, fallback to "now" or do any default you like.
+  const paymentDate = paper.payment_date
+    ? new Date(paper.payment_date)
+    : new Date();
+
+  // Helper function to get the fee structure based on category
+  const getFeeStructure = () => {
+    switch (attendee.category) {
+      case "Local Delegates (Author)":
+        return { early: 6000, regular: 7000, currency: "BDT" };
+      case "Local Delegates (Participant)":
+        return { early: 5000, regular: 6000, currency: "BDT" };
+      case "Local Students (Author/ Co-author)":
+        return { early: 4000, regular: 5000, currency: "BDT" };
+      case "Foreign Delegates":
+        return {
+          early: 43750,
+          regular: 56250,
+          currency: "BDT",
+          usd_early: 350,
+          usd_regular: 450,
+        };
+      case "Foreign Students":
+        return {
+          early: 25000,
+          regular: 31250,
+          currency: "BDT",
+          usd_early: 200,
+          usd_regular: 250,
+        };
+      default:
+        // Some sensible default
+        return { early: 5000, regular: 6000, currency: "BDT" };
+    }
+  };
+
+  const fees = getFeeStructure();
+
+  // Decide which fee applies based on paymentDate
+  let baseFee = 0;
+  if (paymentDate <= earlyBirdDeadline) {
+    baseFee = fees.early; // Early Bird
+  } else if (paymentDate <= regularDeadline) {
+    baseFee = fees.regular; // Regular
+  } else {
+    baseFee = fees.regular; // Late (for demonstration, same as regular)
+  }
+
+  // Additional pages
+  const additionalPageFee = paper.additionalPage
+    ? paper.additionalPage * 1000
+    : 0;
+
+  return baseFee + additionalPageFee;
+}

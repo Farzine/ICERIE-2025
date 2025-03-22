@@ -54,6 +54,14 @@ const paperSchema = new mongoose.Schema({
   val_id: {
     type: String,
   },
+  payment_history: {
+    type: [{
+      val_id: String,
+      amount: Number,
+      date: Date
+    }],
+    default: []
+  }
 }, { _id: false });
 
 const attendeeSchema = new mongoose.Schema({

@@ -91,6 +91,24 @@ exports.initiatePayment = async (req, res) => {
       try {
         const responseData = JSON.parse(body);
         console.log("Payment gateway response:", responseData);
+        // Store payment initiation in payment history
+        if (responseData.data.paymentID) {
+          // Create payment history entry
+          const paymentEntry = {
+            val_id: responseData.data.paymentID,
+            amount: amount,
+            date: new Date(),
+          };
+          
+          // Initialize payment_history array if it doesn't exist
+          if (!paper.payment_history) {
+            paper.payment_history = [];
+          }
+          
+          // Add the new payment entry to history
+          paper.payment_history.push(paymentEntry);
+          console.log(`Added payment to history: ${JSON.stringify(paymentEntry)}`);
+        }
 
         if (
           responseData.status === "success" &&

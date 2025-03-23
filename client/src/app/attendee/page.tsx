@@ -34,11 +34,14 @@ export default function Attendee() {
       });
   }, []);
 
-  const filteredAttendees = attendees.filter(
-    (attendee) =>
-      attendee.name.toLowerCase().includes(keyword.toLowerCase()) ||
-      attendee.email.toLowerCase().includes(keyword.toLowerCase())
-  );
+  // Sort attendees in reverse order and filter based on keyword
+  const filteredAttendees = [...attendees]
+    .reverse()
+    .filter(
+      (attendee) =>
+        attendee.name.toLowerCase().includes(keyword.toLowerCase()) ||
+        attendee.email.toLowerCase().includes(keyword.toLowerCase())
+    );
 
   return (
     <main className="flex flex-col min-h-screen">

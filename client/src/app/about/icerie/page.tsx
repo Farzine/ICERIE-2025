@@ -29,7 +29,7 @@ const AboutPage: React.FC = () => {
           </h2>
         </div>
 
-        <div className="bg-white shadow-lg rounded-lg p-6 sm:p-8 mx-4 sm:mx-72 mt-16 mb-20">
+        <div className="bg-gradient-to-br from-red-50 to-white shadow-lg rounded-lg p-6 sm:p-8 mx-4 sm:mx-72 mt-16 mb-20">
           <div className="flex justify-center items-center mb-10 mt-10 space-x-10">
             <div className="w-24 sm:w-36">
               <Image src="/sustLogo.png" alt="Logo 1" width={130} height={130} layout="responsive" />

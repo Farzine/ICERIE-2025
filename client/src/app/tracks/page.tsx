@@ -138,7 +138,7 @@ export default function IndustryTracks() {
             <button
               key={section.id}
               onClick={() => handleScroll(section.id)}
-              className="block border-2 w-full text-left mt-7 p-2 mb-2 bg-white hover:bg-gray-100 px-5"
+              className="block border-2 w-full text-left mt-7 p-2 mb-2 bg-gradient-to-br from-red-50 to-white hover:bg-gray-100 px-5"
             >
               {section.title}
             </button>

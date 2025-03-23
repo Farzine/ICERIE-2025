@@ -267,7 +267,7 @@ export default function Committees() {
         {/* Advisory Committee Section */}
         <div className="mt-32 mb-32">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-10 text-red-600">Advisory Committee</h2>
-          <div className="bg-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
+          <div className="bg-gradient-to-br from-red-50 to-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
               {advisoryCommittee.map((member, index) => (
                 <div key={index} className="text-xl md:text-2xl text-start mb-2 mx-6 md:mx-16">
@@ -281,7 +281,7 @@ export default function Committees() {
         {/* Technical Programme Committee Section */}
         <div className="mt-32 mb-32">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-10 text-red-600">Technical Programme Committee</h2>
-          <div className="bg-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
+          <div className="bg-gradient-to-br from-red-50 to-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
             <div className="text-center mb-6 mt-6">
               <h3 className="md:text-3xl text-2xl px-2 font-semibold">CONVENER: Prof. Dr. M. Shahidur Rahman, CSE, SUST</h3>
               <p className="mt-5 mb-8">(Not as per seniority)</p>
@@ -299,7 +299,7 @@ export default function Committees() {
         {/* Registration and Certification Committee */}
         <div className="mt-32 mb-32">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-10 text-red-600">Registration and Certification Committee</h2>
-          <div className="bg-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
+          <div className="bg-gradient-to-br from-red-50 to-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
             <div className="text-center mb-6 mt-6">
               <h3 className="md:text-3xl text-2xl px-2 font-semibold">CONVENER: Prof. Dr. Mohammad Muhshin Aziz Khan, IPE, SUST</h3>
               <p className="mt-5 mb-8">(Not as per seniority)</p>
@@ -319,7 +319,7 @@ export default function Committees() {
         {/* Publication and Media Committee */}
         <div className="mt-32 mb-32">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-10 text-red-600">Publication and Media Committee</h2>
-          <div className="bg-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
+          <div className="bg-gradient-to-br from-red-50 to-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
             <div className="text-center mb-6 mt-6">
               <h3 className="md:text-3xl text-2xl px-2 font-semibold">CONVENER: Prof. Dr. Mohammad Muhshin Aziz Khan, IPE, SUST</h3>
               <p className="mt-5 mb-8">(Not as per seniority)</p>
@@ -337,7 +337,7 @@ export default function Committees() {
         {/* Food and Refreshment Committee */}
         <div className="mt-32 mb-32">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-10 text-red-600">Food and Refreshment Committee</h2>
-          <div className="bg-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
+          <div className="bg-gradient-to-br from-red-50 to-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
             <div className="text-center mb-6 mt-6">
               <h3 className="md:text-3xl text-2xl px-2 font-semibold">CONVENER: Prof. Dr. Iftekhar Ahmad, FET, SUST</h3>
               <p className="mt-5 mb-8">(Not as per seniority)</p>
@@ -355,7 +355,7 @@ export default function Committees() {
         {/* Fund Raising Committee */}
         <div className="mt-32 mb-32">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-10 text-red-600">Fund Raising Committee</h2>
-          <div className="bg-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
+          <div className="bg-gradient-to-br from-red-50 to-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
             <div className="text-center mb-6 mt-6">
               <h3 className="md:text-3xl text-2xl px-2 font-semibold">CONVENER: Prof. Dr. Md. Ariful Islam, Dept. IPE, SUST</h3>
               <p className="mt-5 mb-8">(Not as per seniority)</p>
@@ -373,7 +373,7 @@ export default function Committees() {
         {/* Website and Manuscript Submission Committee */}
         <div className="mt-32 mb-32">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-10 text-red-600">Website and Manuscript Submission Committee</h2>
-          <div className="bg-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
+          <div className="bg-gradient-to-br from-red-50 to-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
             <div className="text-center mb-6 mt-6">
               <h3 className="md:text-3xl text-2xl px-2 font-semibold">CONVENER: Prof. Dr. Mohammad Abdullah Al Mumin, CSE, SUST</h3>
               <p className="mt-5 mb-8">(Not as per seniority)</p>
@@ -391,7 +391,7 @@ export default function Committees() {
         {/* Accommodation, Transport and Tour Committee */}
         <div className="mt-32 mb-32">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-10 text-red-600">Accommodation, Transport and Tour Committee</h2>
-          <div className="bg-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
+          <div className="bg-gradient-to-br from-red-50 to-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
             <div className="text-center mb-6 mt-6">
               <h3 className="md:text-3xl text-2xl px-2 font-semibold">CONVENER: Prof. Dr. Md. Misbah Uddin, CEE, SUST</h3>
               <p className="mt-5 mb-8">(Not as per seniority)</p>
@@ -409,7 +409,7 @@ export default function Committees() {
         {/* Event Management Committee */}
         <div className="mt-32 mb-32">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-10 text-red-600">Event Management Committee</h2>
-          <div className="bg-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
+          <div className="bg-gradient-to-br from-red-50 to-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
             <div className="text-center mb-6 mt-6">
               <h3 className="md:text-3xl text-2xl px-2 font-semibold">CONVENER: Prof. Dr. Mohammad Shahidur Rahman, CEE, SUST</h3>
               <p className="mt-5 mb-8">(Not as per seniority)</p>
@@ -426,7 +426,7 @@ export default function Committees() {
         {/* Virtual Session Management Committee */}
         <div className="mt-32 mb-32">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-10 text-red-600">Virtual Session Management Committee</h2>
-          <div className="bg-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
+          <div className="bg-gradient-to-br from-red-50 to-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
             <div className="text-center mb-6 mt-6">
               <h3 className="md:text-3xl text-2xl px-2 font-semibold">CONVENER: Prof. Dr. M. Jahirul Islam, CSE, SUST</h3>
               <p className="mt-5 mb-8">(Not as per seniority)</p>
@@ -444,7 +444,7 @@ export default function Committees() {
         {/* POSTER SESSION MANAGEMENT */}
         <div className="mt-32 mb-32">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-10 text-red-600">Poster Session Management Committee</h2>
-          <div className="bg-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
+          <div className="bg-gradient-to-br from-red-50 to-white rounded-lg py-6 mt-4 mx-4 sm:mx-10 my-16">
             <div className="text-center mb-6 mt-6">
               <h3 className="md:text-3xl text-2xl px-2 font-semibold">CONVENER: Ar. Kawshik Saha, ARC, SUST</h3>
               <p className="mt-5 mb-8">(Not as per seniority)</p>

@@ -16,7 +16,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
   checkend,
 }) => {
   return (
-    <div className="flex justify-center w-full my-4">
+    <div className="flex justify-center w-full my-4 bg-gradient-to-br from-red-50 to-white">
       {/* icon with or without tail */}
       <div className="">
         {checkend ? (

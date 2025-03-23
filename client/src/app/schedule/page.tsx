@@ -77,7 +77,7 @@ const Schedule: React.FC = () => {
       </div>
 
       <div className="flex-grow bg-white p-8 md:p-16 mt-16">
-        <div className="w-full md:w-4/5 bg-white mx-auto h-auto pb-10 rounded-md shadow-lg">
+        <div className="w-full md:w-4/5 bg-gradient-to-br from-red-50 to-white mx-auto h-auto pb-10 rounded-md shadow-lg">
           {/* heading box */}
           <div className="heading flex justify-center items-center my-4">
             <svg
@@ -145,7 +145,7 @@ const Schedule: React.FC = () => {
         </div>
 
         {/* session list */}
-        <div className="w-full md:w-4/5 bg-white mx-auto h-auto pb-10 rounded-md shadow-lg mt-24">
+        <div className="w-full md:w-4/5 bg-gradient-to-br from-red-50 to-white mx-auto h-auto pb-10 rounded-md shadow-lg mt-24">
           {/* heading box */}
           <div className="heading flex justify-center items-center my-4">
             <svg

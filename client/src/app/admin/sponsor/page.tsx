@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "@/components/Sidebar";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 const UploadSponsorImagePage: React.FC = () => {
   const [images, setImages] = useState<any[]>([]);
@@ -263,14 +262,12 @@ const UploadSponsorImagePage: React.FC = () => {
                 </button>
               </div>
               <div className="flex justify-center items-center h-24 sm:h-32 md:h-40">
-                <Image
+                <img
                   src={image.path}
                   alt={image.sponsorName}
                   className="object-contain max-h-full"
-                  width={120}
-                  height={120}
-                  sizes="(max-width: 640px) 80px, (max-width: 768px) 100px, 120px"
-                  priority
+                  width="120"
+                  height="120"
                 />
               </div>
             </div>

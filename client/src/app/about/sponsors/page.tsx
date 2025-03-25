@@ -54,17 +54,15 @@ const SponsorsPage: React.FC = () => {
             {filteredSponsors.length > 0 ? (
             filteredSponsors.map((sponsor) => (
               <div key={sponsor._id} className="text-center p-4 transition-transform hover:scale-105">
-              <div className="flex justify-center items-center h-24 sm:h-32 md:h-40">
-                <Image
-                src={sponsor.path}
-                alt={sponsor.sponsorName}
-                className="object-contain max-h-full"
-                width={120}
-                height={120}
-                sizes="(max-width: 640px) 80px, (max-width: 768px) 100px, 120px"
-                priority
+                <div className="flex justify-center items-center h-24 sm:h-32 md:h-40">
+                <img
+                  src={sponsor.path}
+                  alt={sponsor.sponsorName}
+                  className="object-contain max-h-full"
+                  width="120"
+                  height="120"
                 />
-              </div>
+                </div>
               <p className="mt-4 text-sm sm:text-base md:text-lg font-medium text-gray-800 line-clamp-2">
                 {sponsor.sponsorName}
               </p>

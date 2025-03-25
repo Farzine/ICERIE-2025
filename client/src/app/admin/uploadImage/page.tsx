@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
 const UploadImagePage: React.FC = () => {
     const [images, setImages] = useState<any[]>([]);
@@ -252,7 +251,7 @@ const UploadImagePage: React.FC = () => {
                                     {loading ? 'Deleting...' : 'Delete'}
                                 </button>
                             </div>
-                            <Image src={image.path} alt={image.description} className="w-32 h-24 object-cover rounded ml-4" width={100} height={100} />
+                            <img src={image.path} alt={image.description} className="w-32 h-24 object-cover rounded ml-4" width="100" height="100" />
                         </div>
                     ))}
                     {isLoading && <div>Loading...</div>}

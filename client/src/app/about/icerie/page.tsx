@@ -3,7 +3,6 @@ import Footer from '@/components/Footer';
 import Navbar from '@/components/NavBar';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
 import Carousel from '@/js';
-import Image from 'next/image';
 import React from 'react';
 
 const AboutPage: React.FC = () => {
@@ -32,10 +31,10 @@ const AboutPage: React.FC = () => {
         <div className="bg-gradient-to-br from-red-50 to-white shadow-lg rounded-lg p-6 sm:p-8 mx-4 sm:mx-72 mt-16 mb-20">
           <div className="flex justify-center items-center mb-10 mt-10 space-x-10">
             <div className="w-24 sm:w-36">
-              <Image src="/sustLogo.png" alt="Logo 1" width={130} height={130} layout="responsive" />
+              <img src="/sustLogo.png" loading="eager" alt="Logo 1" width={130} height={130} className="w-full h-auto" />
             </div>
             <div className="w-28 sm:w-40">
-              <Image src="/icerieLogo.jpg" alt="Logo 2" width={130} height={130} layout="responsive" />
+              <img src="/icerieLogo.jpg" loading="eager" alt="Logo 2" width={130} height={130} className="w-full h-auto" />
             </div>
           </div>
 

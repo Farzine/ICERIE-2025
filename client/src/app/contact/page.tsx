@@ -2,7 +2,6 @@
 import Footer from '@/components/Footer';
 import Navbar from '@/components/NavBar';
 import React from 'react';
-import Image from 'next/image';
 import Carousel from '@/js';
 import { HiOutlineOfficeBuilding, HiOutlineLocationMarker } from 'react-icons/hi';
 
@@ -21,11 +20,12 @@ const ContactUs: React.FC = () => {
         <div className="relative mb-6">
         <div className="absolute -inset-1.5 bg-gradient-to-r from-red-500 to-red-400 rounded-full blur-md opacity-20"></div>
         <div className="bg-white p-3 rounded-full shadow-md relative">
-          <Image
+          <img
           src="/support.png"
           alt="Support icon"
           width={80}
           height={80}
+          loading="eager"
           className="w-12 h-12 md:w-16 md:h-16 object-contain"
           />
         </div>
@@ -70,9 +70,10 @@ const ContactUs: React.FC = () => {
         <div className="space-y-5 md:space-y-6">
           <div className="flex items-center group hover:transform hover:translate-x-1 transition-transform duration-300">
           <div className="bg-red-50 p-3 rounded-full mr-4 group-hover:bg-red-100 transition-colors duration-300 shadow-sm">
-            <Image
+            <img
             src="/gmail.png"
             alt="Email"
+            loading="eager"
             width={24}
             height={24}
             className="object-contain"
@@ -88,8 +89,9 @@ const ContactUs: React.FC = () => {
           
           <div className="flex items-center group hover:transform hover:translate-x-1 transition-transform duration-300">
           <div className="bg-red-50 p-3 rounded-full mr-4 group-hover:bg-red-100 transition-colors duration-300 shadow-sm">
-            <Image
+            <img
             src="/whatsapp.png"
+            loading="eager"
             alt="WhatsApp"
             width={24}
             height={24}
@@ -106,9 +108,10 @@ const ContactUs: React.FC = () => {
           
           <div className="flex items-center group hover:transform hover:translate-x-1 transition-transform duration-300">
           <div className="bg-red-50 p-3 rounded-full mr-4 group-hover:bg-red-100 transition-colors duration-300 shadow-sm">
-            <Image
+            <img
             src="/facebook.png"
             alt="Facebook"
+            loading="eager"
             width={24}
             height={24}
             className="object-contain"
@@ -126,9 +129,10 @@ const ContactUs: React.FC = () => {
           
           <div className="flex items-center group hover:transform hover:translate-x-1 transition-transform duration-300">
           <div className="bg-red-50 p-3 rounded-full mr-4 group-hover:bg-red-100 transition-colors duration-300 shadow-sm">
-            <Image
+            <img
             src="/call.png"
             alt="Phone"
+            loading="eager"
             width={24}
             height={24}
             className="object-contain"

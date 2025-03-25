@@ -5,7 +5,6 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/NavBar";
 import axios from "axios";
 import { PlusCircle, X } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -301,10 +300,10 @@ export default function AttendeePapersPage({
           <div className="p-6 flex flex-col md:flex-row items-center gap-6">
             <div className="flex-shrink-0">
               <div className="w-32 h-32 relative rounded-full overflow-hidden border-4 border-white shadow-md">
-                <Image
+                <img
                   src={attendee.photoUrl || "/placeholder.svg"}
                   alt={attendee.name}
-                  fill
+                  style={{ objectFit: "cover", width: "100%", height: "100%" }}
                   className="object-cover"
                 />
               </div>

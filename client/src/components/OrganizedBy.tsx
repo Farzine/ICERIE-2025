@@ -1,4 +1,3 @@
-import Image from "next/image";
 
 const OrganizedBy = () => {
   return (
@@ -17,8 +16,9 @@ const OrganizedBy = () => {
 
       </div>
       <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
-        <Image
+        <img
           src="/sustLogo.png"
+          loading="eager"
           alt="Logo"
           width={130}
           height={130}

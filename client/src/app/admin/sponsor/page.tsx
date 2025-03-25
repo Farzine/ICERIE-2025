@@ -265,6 +265,7 @@ const UploadSponsorImagePage: React.FC = () => {
                 <img
                   src={image.path}
                   alt={image.sponsorName}
+                  loading="eager"
                   className="object-contain max-h-full"
                   width="120"
                   height="120"

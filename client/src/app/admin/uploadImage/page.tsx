@@ -251,7 +251,7 @@ const UploadImagePage: React.FC = () => {
                                     {loading ? 'Deleting...' : 'Delete'}
                                 </button>
                             </div>
-                            <img src={image.path} alt={image.description} className="w-32 h-24 object-cover rounded ml-4" width="100" height="100" />
+                            <img src={image.path} loading="eager" alt={image.description} className="w-32 h-24 object-cover rounded ml-4" width="100" height="100" />
                         </div>
                     ))}
                     {isLoading && <div>Loading...</div>}

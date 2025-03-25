@@ -1,4 +1,3 @@
-import ScrollToTopButton from "../components/ScrollToTopButton";
 
 interface ProfileCardProps {
   profile: {

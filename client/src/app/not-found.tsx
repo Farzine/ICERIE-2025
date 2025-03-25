@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { IoIosArrowBack } from "react-icons/io";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import Image from "next/image";
 export default function NotFoundPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-gray-900">
@@ -14,10 +13,11 @@ export default function NotFoundPage() {
           <IoIosArrowBack className="w-10  mt-1 h-10 group-hover:text-red-500 " /> Home 
         </Link>
         <div className="flex items-center gap-2">
-        <Image
+        <img
           src="/icLogo.webp"
           width={150}
           height={150}
+          loading="eager"
           alt="ICERIE 2025 Logo"
           className="h-12 w-auto"
         />

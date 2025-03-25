@@ -2,7 +2,6 @@
 
 import Footer from "@/components/Footer";
 import Navbar from "@/components/NavBar";
-import OrganizedBy from "@/components/OrganizedBy";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import ImportantDates from "@/components/FrontendImportantDateComponent";
 import MessageCard from "@/components/MessageComponent";

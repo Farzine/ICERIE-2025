@@ -3,7 +3,6 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import Image from "next/image";
 import { IoMdPrint } from "react-icons/io";
 
 const PayslipPage = ({ params }: { params: { id: string } }) => {
@@ -71,14 +70,14 @@ const PayslipPage = ({ params }: { params: { id: string } }) => {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-3">
-                <Image
+                <img
                   src="/icLogo.webp"
                   width={150}
                   height={80}
                   alt="ICERIE 2025 Logo"
                   className="h-10 sm:h-12 w-auto object-contain"
                 />
-                <Image
+                <img
                   src="/sustLogo.png"
                   alt="SUST Logo"
                   width={40}

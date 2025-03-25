@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Navbar from '@/components/NavBar';
 import OrganizedBy from '@/components/OrganizedBy';
 import Footer from '@/components/Footer';
@@ -59,6 +58,7 @@ const SponsorsPage: React.FC = () => {
                   src={sponsor.path}
                   alt={sponsor.sponsorName}
                   className="object-contain max-h-full"
+                  loading="eager"
                   width="120"
                   height="120"
                 />
@@ -91,7 +91,7 @@ const SponsorsPage: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className='flex justify-center mr-28 items-center mt-28'>
           <div className='pt-9 mr-4'>
-            <Image src="/handshake.png" alt="handshake icon" width={50} height={50} />
+            <img src="/handshake.png" loading="eager" alt="handshake icon" width={50} height={50} />
           </div>
           <div>
             <h1 className="text-5xl md:text-6xl font-bold mt-5">Sponsors</h1>

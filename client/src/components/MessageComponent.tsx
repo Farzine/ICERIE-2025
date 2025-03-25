@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 
 
@@ -61,9 +60,10 @@ const MessageCard: React.FC = () => {
 
         {/* Profile and Text */}
         <div className="flex items-center mb-6 md:ml-0 ml-5">
-          <Image
+          <img
             src="/teacher/selim.jpeg"
             alt="Md Farhad Rabbi"
+            loading="eager"
             width={64}
             height={64}
             className="rounded-full mr-4"

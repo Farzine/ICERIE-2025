@@ -214,7 +214,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { CldUploadWidget } from "next-cloudinary";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";
@@ -314,12 +313,11 @@ export default function Registration() {
       <div className="flex-grow grid md:grid-cols-2 grid-cols-1 justify-center items-center">
         {/* Background Image Section */}
         <div className="relative h-full bg-black bg-opacity-50 overflow-hidden md:visible invisible">
-          <Image
+          <img
             src="/IICT.jpg"
             alt="IICT SUST"
-            layout="fill"
-            objectFit="cover"
-            className="opacity-50 z-0"
+            loading="eager"
+            className="opacity-50 z-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 flex flex-col justify-end items-center z-10">
             <p className="text-white text-center font-mono text-5xl font-semibold p-4">
@@ -332,10 +330,11 @@ export default function Registration() {
         </div>
         {/* Registration Form Section */}
         <div className="rounded-lg flex flex-col items-center py-20 px-10 ">
-          <Image
+          <img
             src="/icerieLogo.jpg"
             height={200}
             width={200}
+            loading="eager"
             alt=""
             className="aspect-square w-32 md:w-48"
           />
@@ -447,18 +446,20 @@ export default function Registration() {
               />
             </div>
             {form.photoUrl ? (
-              <Image
+              <img
                 src={form.photoUrl}
                 height={200}
                 width={200}
+                loading="eager"
                 alt=""
                 className="rounded-full h-32 w-32"
               />
             ) : (
-              <Image
+              <img
                 src="/camera.png"
                 height={200}
                 width={200}
+                loading="eager"
                 alt=""
                 className="rounded-full h-32 w-32"
               />

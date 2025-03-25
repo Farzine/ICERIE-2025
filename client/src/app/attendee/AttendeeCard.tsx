@@ -1,7 +1,6 @@
 
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import Image from 'next/image';
 import { UserIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 
 interface AttendeeCardProps {
@@ -23,15 +22,12 @@ function AttendeeCard(props: AttendeeCardProps) {
       {/* Profile Picture with loading animation - larger size */}
       <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 mb-4">
         <div className="absolute inset-0 rounded-full bg-gray-200 animate-pulse"></div>
-        <Image 
+        <img 
           src={validPhotoUrl} 
           alt={`${props.name}`} 
-          className="rounded-full object-cover border-3 border-gray-50 shadow-sm" 
-          fill
-          sizes="(max-width: 768px) 112px, (max-width: 1024px) 128px, 160px"
-          priority
-          onLoadingComplete={(img) => img.classList.remove('opacity-0')}
-          style={{ objectFit: 'cover' }}
+          className="rounded-full object-cover border-3 border-gray-50 shadow-sm w-full h-full"
+          loading="eager"
+          onLoad={(e) => e.currentTarget.parentElement?.querySelector('.animate-pulse')?.classList.add('hidden')}
         />
       </div>
 

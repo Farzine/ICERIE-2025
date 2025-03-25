@@ -4,7 +4,6 @@ import Footer from '@/components/Footer';
 import Navbar from '@/components/NavBar';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
 import React from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Carousel from '@/js';
 
@@ -28,9 +27,10 @@ const RegistrationFees: React.FC = () => {
                 
                 {/* Heading Section */}
                 <div className='flex flex-col md:flex-row items-center justify-center mt-14 mb-10'>
-                    <Image
+                    <img
                         src="/fees.png"
                         alt="fees icon"
+                        loading="eager"
                         width={50}
                         height={50}
                         className="mb-4 md:mr-8"
@@ -92,9 +92,10 @@ const RegistrationFees: React.FC = () => {
                 <div className="mb-8 ml-4 md:ml-24 mt-16">
                     <div className='flex items-center'>
                         <h2 className="text-2xl md:text-3xl font-bold mb-4 text-red-600">PAYMENT DEADLINE</h2>
-                        <Image
+                        <img
                             src="/information-button.png"
                             alt="information icon"
+                            loading="eager"
                             width={21}
                             height={21}
                             className="ml-3 mb-4"

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 
 import OrganizedBy from "@/components/OrganizedBy";
 
@@ -70,14 +69,13 @@ const SponsorsPage: React.FC = () => {
                   className="text-center p-4 transition-transform hover:scale-105"
                 >
                   <div className="flex justify-center items-center h-24 sm:h-32 md:h-40">
-                    <Image
+                    <img
                       src={sponsor.path}
                       alt={sponsor.sponsorName}
                       className="object-contain max-h-full"
                       width={120}
                       height={120}
                       sizes="(max-width: 640px) 80px, (max-width: 768px) 100px, 120px"
-                      priority
                     />
                   </div>
                   <p className="mt-4 text-sm  sm:text-base md:text-lg font-medium text-gray-800 line-clamp-2">
@@ -127,7 +125,7 @@ const SponsorsPage: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-center mr-28 items-center mt-28">
           <div className="pt-9 mr-4">
-            <Image
+            <img
               src="/handshake.png"
               alt="handshake icon"
               width={50}
@@ -136,16 +134,16 @@ const SponsorsPage: React.FC = () => {
           </div>
           <div  className="flex flex-col justify-center items-center">
             {/* Rhombus Background Images */}
-          <Image
-            src={Rhombhus}
+          <img
+            src={Rhombhus.src}
             alt="Rhombus"
             className="absolute left-1 md:z-0 -z-10"
             width={250} // Smaller width for mobile
             height={200}
             sizes="(max-width: 768px) 150px, 250px" // Responsive image sizes
           />
-          <Image
-            src={Rhombhus}
+          <img
+            src={Rhombhus.src}
             alt="Rhombus"
             className="absolute right-0 md:z-0 -z-10"
             width={250} // Smaller width for mobile

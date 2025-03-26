@@ -11,6 +11,7 @@ const PayslipPage = ({ params }: { params: { id: string } }) => {
   const paperId = searchParams.get("paperId");
   const [paymentsData, setPaymentsData] = useState<any>(null);
   const [paperData, setPaperData] = useState<any>(null);
+  const [paymentHistory, setPaymentHistory] = useState<any>(null);
   const invoiceRef = useRef<HTMLDivElement>(null);
 
   const BACKENDURL = process.env.NEXT_PUBLIC_APP_BACKEND_URL;
@@ -34,9 +35,19 @@ const PayslipPage = ({ params }: { params: { id: string } }) => {
       const paper = paymentsData.papers.find(
         (paper: any) => paper.paperId === paperId
       );
+      if (paper) {
+        const matchingPaymentHistory = paper.payment_history.find(
+          (payment: any) => payment.val_id === paper.val_id
+        );
+        console.log("Matching Payment History:", matchingPaymentHistory);
+        setPaymentHistory(matchingPaymentHistory || null);
+        console.log("Paper Data:", paper);
       setPaperData(paper || null);
+      }
     }
   }, [paymentsData, paperId]);
+  
+
 
   const handlePrint = () => {
     window.print();
@@ -63,6 +74,10 @@ const PayslipPage = ({ params }: { params: { id: string } }) => {
 
 
   // console.log(paymentsData);
+  // console.log("paymentHistory", paymentHistory);  
+  // console.log("paymenthistory date", paymentHistory?.date);
+  // const aa = new Date(paymentHistory?.date);
+  // console.log("currentDate", aa.toUTCString());
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-white text-slate-600 shadow-lg rounded-lg my-8 border border-gray-200 font-sans print:shadow-none print:border-0">
@@ -135,7 +150,11 @@ const PayslipPage = ({ params }: { params: { id: string } }) => {
               Status: <span className="font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full text-xs">Paid</span>
             </p>
             <p className="text-sm text-slate-600 mt-2">
-              Date: <span className="font-semibold text-slate-800">{new Date(paperData?.payment_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+              Date: <span className="font-semibold text-slate-800">
+                {paymentHistory
+                ? new Date(paymentHistory?.date).toUTCString()
+                : new Date(paperData?.payment_date).toUTCString()}
+              </span>
             </p>
           </div>
         </div>
@@ -226,7 +245,8 @@ const PayslipPage = ({ params }: { params: { id: string } }) => {
 
                     // Determine which fee applies
                     let amount, phase;
-                    const currentDate = new Date(paperData.payment_date);
+                    const currentDate = paymentHistory? new Date(paymentHistory?.date) : new Date(paperData?.payment_date);
+                    console.log(currentDate);
 
                     if (currentDate <= earlyBirdDeadline) {
                       amount = fees.early;

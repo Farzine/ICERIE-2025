@@ -30,13 +30,17 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import calculatePaidAmount from "./calculateTotalAmount";
 
 // For Excel export
 import * as XLSX from "xlsx";
 
-/** ===========================
- *  Types (based on your schema)
- *  =========================== */
+interface PaymentHistory {
+  val_id: string;
+  amount: number;
+  date: string;
+}
+
 interface Paper {
   paperId: string;
   track: string;
@@ -48,6 +52,7 @@ interface Paper {
   payment_date?: string;
   val_id?: string;
   additionalPage?: number;
+  payment_history?: PaymentHistory[];
 }
 
 interface Attendee {
@@ -436,7 +441,10 @@ const AttendeePage: React.FC = () => {
     const perAttendeeTotal = attendee.papers
       .filter((paper) => paper.payment_status)
       .reduce((paperSum, paper) => {
-        return paperSum + calculatePaidAmount(attendee, paper);
+        const paymentHistory = paper.payment_history?.find(
+          (payment: PaymentHistory) => payment.val_id === paper.val_id
+        ) || null;
+        return paperSum + calculatePaidAmount(attendee, paper, paymentHistory);
       }, 0);
 
     return sum + perAttendeeTotal;
@@ -484,8 +492,14 @@ const AttendeePage: React.FC = () => {
 
       // Return an array of row arrays
       return paidPapers.map((paper) => {
+
+        const paymentHistory = paper.payment_history?.find(
+          (payment: PaymentHistory) => payment.val_id === paper.val_id
+        ) || null;
+
+        const paymentDate = paymentHistory?.date || paper.payment_date;
         // Calculate the total amount for this row
-        const paidAmount = calculatePaidAmount(attendee, paper);
+        const paidAmount = calculatePaidAmount(attendee, paper,paymentHistory);
 
         return [
           attendee.name,
@@ -504,7 +518,7 @@ const AttendeePage: React.FC = () => {
           paper.presentationMood,
           paper.additionalPage || "0",
           "Paid",
-          paper.payment_date || "",
+          paymentDate || "",
           paper.val_id || "",
           paidAmount.toString(),
         ];
@@ -766,8 +780,11 @@ const AttendeePage: React.FC = () => {
                           {/* //////////////////// */}
 
                           {(() => {
+                            const paymentHistory = paper.payment_history?.find(
+                              (payment: PaymentHistory) => payment.val_id === paper.val_id
+                            ) || null;
                             
-                            const TotalAmount = calculatePaidAmount(row, paper);
+                            const TotalAmount = calculatePaidAmount(row, paper, paymentHistory);
 
                             return (
                               <TableCell className="border-t border-gray-200 text-sm font-mono text-gray-600">
@@ -779,11 +796,20 @@ const AttendeePage: React.FC = () => {
                           {/* /////////////////////// */}
 
                           <TableCell className="border-t border-gray-200 text-sm">
-                            {paper.payment_date
-                              ? new Date(
-                                  paper.payment_date
-                                ).toLocaleDateString()
-                              : "-"}
+                            {(() => {
+                              // Find the payment history entry that matches the paper's val_id
+                              const matchingPayment = paper.payment_history?.find(
+                                (payment: PaymentHistory) => payment.val_id === paper.val_id
+                              );
+                              
+                              // Use the matching payment date if found, otherwise fall back to paper.payment_date
+                              const paymentDate = matchingPayment?.date || paper.payment_date;
+                              
+                              // Format and display the date, or show "-" if no date is available
+                              return paymentDate 
+                                ? new Date(paymentDate).toUTCString()
+                                : "-";
+                            })()}
                           </TableCell>
                           <TableCell className="border-t border-gray-200 text-sm font-mono text-gray-600">
                             {paper.val_id || "-"}
@@ -1074,67 +1100,80 @@ const AttendeePage: React.FC = () => {
 
 export default AttendeePage;
 
-// You can place this anywhere outside your component (e.g., top of file).
-function calculatePaidAmount(attendee: Attendee, paper: Paper): number {
-  // For demonstration, we’ll replicate the same logic you used in the table:
+// // You can place this anywhere outside your component (e.g., top of file).
+// function calculatePaidAmount(attendee: Attendee, paper: Paper): number {
+//   // For demonstration, we’ll replicate the same logic you used in the table:
+//   const [paymentHistory, setPaymentHistory] = useState<any>(null);
+//   // Deadlines
+//   const earlyBirdDeadline = new Date("2025-03-25T23:59:59Z");
+//   const regularDeadline = new Date("2025-04-10T23:59:59Z");
 
-  // Deadlines
-  const earlyBirdDeadline = new Date("2025-03-25T23:59:59Z");
-  const regularDeadline = new Date("2025-04-10T23:59:59Z");
+//   if (paper) {
+//     const matchingPaymentHistory = paper.payment_history?.find(
+//       (payment: any) => payment.val_id === paper.val_id
+//     );
+//     setPaymentHistory(matchingPaymentHistory);
+//   }
+  
+//   // If you want to base it on the paper.payment_date (when the user actually paid):
+//   // If there's no payment_date, fallback to "now" or do any default you like.
+//   let paymentDate;
+//   if(paymentHistory) {
+//     paymentDate = new Date(paymentHistory.date);
+//   } else if (paper.payment_date) {
+//     paymentDate = new Date(paper.payment_date);
+//   }
+//   else {
+//     paymentDate = new Date();
+//   }
 
-  // If you want to base it on the paper.payment_date (when the user actually paid):
-  // If there's no payment_date, fallback to "now" or do any default you like.
-  const paymentDate = paper.payment_date
-    ? new Date(paper.payment_date)
-    : new Date();
+//   // Helper function to get the fee structure based on category
+//   const getFeeStructure = () => {
+//     switch (attendee.category) {
+//       case "Local Delegates (Author)":
+//         return { early: 6000, regular: 7000, currency: "BDT" };
+//       case "Local Delegates (Participant)":
+//         return { early: 5000, regular: 6000, currency: "BDT" };
+//       case "Local Students (Author/ Co-author)":
+//         return { early: 4000, regular: 5000, currency: "BDT" };
+//       case "Foreign Delegates":
+//         return {
+//           early: 43750,
+//           regular: 56250,
+//           currency: "BDT",
+//           usd_early: 350,
+//           usd_regular: 450,
+//         };
+//       case "Foreign Students":
+//         return {
+//           early: 25000,
+//           regular: 31250,
+//           currency: "BDT",
+//           usd_early: 200,
+//           usd_regular: 250,
+//         };
+//       default:
+//         // Some sensible default
+//         return { early: 5000, regular: 6000, currency: "BDT" };
+//     }
+//   };
 
-  // Helper function to get the fee structure based on category
-  const getFeeStructure = () => {
-    switch (attendee.category) {
-      case "Local Delegates (Author)":
-        return { early: 6000, regular: 7000, currency: "BDT" };
-      case "Local Delegates (Participant)":
-        return { early: 5000, regular: 6000, currency: "BDT" };
-      case "Local Students (Author/ Co-author)":
-        return { early: 4000, regular: 5000, currency: "BDT" };
-      case "Foreign Delegates":
-        return {
-          early: 43750,
-          regular: 56250,
-          currency: "BDT",
-          usd_early: 350,
-          usd_regular: 450,
-        };
-      case "Foreign Students":
-        return {
-          early: 25000,
-          regular: 31250,
-          currency: "BDT",
-          usd_early: 200,
-          usd_regular: 250,
-        };
-      default:
-        // Some sensible default
-        return { early: 5000, regular: 6000, currency: "BDT" };
-    }
-  };
+//   const fees = getFeeStructure();
 
-  const fees = getFeeStructure();
+//   // Decide which fee applies based on paymentDate
+//   let baseFee = 0;
+//   if (paymentDate <= earlyBirdDeadline) {
+//     baseFee = fees.early; // Early Bird
+//   } else if (paymentDate <= regularDeadline) {
+//     baseFee = fees.regular; // Regular
+//   } else {
+//     baseFee = fees.regular; // Late (for demonstration, same as regular)
+//   }
 
-  // Decide which fee applies based on paymentDate
-  let baseFee = 0;
-  if (paymentDate <= earlyBirdDeadline) {
-    baseFee = fees.early; // Early Bird
-  } else if (paymentDate <= regularDeadline) {
-    baseFee = fees.regular; // Regular
-  } else {
-    baseFee = fees.regular; // Late (for demonstration, same as regular)
-  }
+//   // Additional pages
+//   const additionalPageFee = paper.additionalPage
+//     ? paper.additionalPage * 1000
+//     : 0;
 
-  // Additional pages
-  const additionalPageFee = paper.additionalPage
-    ? paper.additionalPage * 1000
-    : 0;
-
-  return baseFee + additionalPageFee;
-}
+//   return baseFee + additionalPageFee;
+// }

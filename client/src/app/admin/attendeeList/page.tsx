@@ -766,84 +766,12 @@ const AttendeePage: React.FC = () => {
                           {/* //////////////////// */}
 
                           {(() => {
-                            const earlyBirdDeadline = new Date(
-                              "2025-03-25T23:59:59Z"
-                            );
-                            const regularDeadline = new Date(
-                              "2025-04-10T23:59:59Z"
-                            );
-                            const currentDate = new Date();
-
-                            // Get fee structure based on attendee category
-                            const getFeeStructure = () => {
-                              switch (row.category) {
-                                case "Local Delegates (Author)":
-                                  return {
-                                    early: 6000,
-                                    regular: 7000,
-                                    currency: "BDT",
-                                  };
-                                case "Local Delegates (Participant)":
-                                  return {
-                                    early: 5000,
-                                    regular: 6000,
-                                    currency: "BDT",
-                                  };
-                                case "Local Students (Author/ Co-author)":
-                                  return {
-                                    early: 4000,
-                                    regular: 5000,
-                                    currency: "BDT",
-                                  };
-                                case "Foreign Delegates":
-                                  return {
-                                    early: 43750,
-                                    regular: 56250,
-                                    currency: "BDT",
-                                    usd_early: 350,
-                                    usd_regular: 450,
-                                  };
-                                case "Foreign Students":
-                                  return {
-                                    early: 25000,
-                                    regular: 31250,
-                                    currency: "BDT",
-                                    usd_early: 200,
-                                    usd_regular: 250,
-                                  };
-                                default:
-                                  return {
-                                    early: 5000,
-                                    regular: 6000,
-                                    currency: "BDT",
-                                  };
-                              }
-                            };
-
-                            const fees = getFeeStructure();
-                            const isForeign = row.category?.includes("Foreign");
-
-                            // Determine which fee applies
-                            let amount, phase;
-                            if (currentDate <= earlyBirdDeadline) {
-                              amount = fees.early;
-                              phase = "Early Bird";
-                            } else if (currentDate <= regularDeadline) {
-                              amount = fees.regular;
-                              phase = "Regular";
-                            } else {
-                              phase = "Late";
-                              amount = fees.regular; // Use regular fee but mark as late
-                            }
-
-                            const additionalPageFee = paper.additionalPage
-                              ? paper.additionalPage * 1000
-                              : 0;
-                            const TotalAmount = amount + additionalPageFee;
+                            
+                            const TotalAmount = calculatePaidAmount(row, paper);
 
                             return (
                               <TableCell className="border-t border-gray-200 text-sm font-mono text-gray-600">
-                                {TotalAmount} {fees.currency}
+                                {TotalAmount} {row.currency}
                               </TableCell>
                             );
                           })()}

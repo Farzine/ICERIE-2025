@@ -3,7 +3,6 @@
 import Footer from '@/components/Footer';
 import Navbar from '@/components/NavBar';
 import Carousel from '@/js';
-import Link from 'next/link';
 // Import the Carousel component
 
 export default function Accommodation() {

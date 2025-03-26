@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { IoMdPrint } from "react-icons/io";
+import { set } from "date-fns";
 
 const PayslipPage = ({ params }: { params: { id: string } }) => {
   const searchParams = useSearchParams();
@@ -20,6 +21,7 @@ const PayslipPage = ({ params }: { params: { id: string } }) => {
     axios
       .get(`${BACKENDURL}/registration/${params.id}`)
       .then((response) => {
+        console.log("Data fetched:", response.data);
         setPaymentsData(response.data);
       })
       .catch((error) => {
@@ -147,6 +149,8 @@ const PayslipPage = ({ params }: { params: { id: string } }) => {
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Publication</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Presentation</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Status</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Amount</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Phase</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border border-slate-200">Addi. Pages</th>
               </tr>
             </thead>
@@ -163,6 +167,96 @@ const PayslipPage = ({ params }: { params: { id: string } }) => {
                       <span className="bg-yellow-50 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">Pending</span>
                     )}
                   </td>
+                  {(() => {
+                    const earlyBirdDeadline = new Date(
+                      "2025-03-25T23:59:59Z"
+                    );
+                    const regularDeadline = new Date(
+                      "2025-04-10T23:59:59Z"
+                    );
+
+                    // Get fee structure based on attendee category
+                    const getFeeStructure = () => {
+                      switch (paymentsData.category) {
+                        case "Local Delegates (Author)":
+                          return {
+                            early: 6000,
+                            regular: 7000,
+                            currency: "BDT",
+                          };
+                        case "Local Delegates (Participant)":
+                          return {
+                            early: 5000,
+                            regular: 6000,
+                            currency: "BDT",
+                          };
+                        case "Local Students (Author/ Co-author)":
+                          return {
+                            early: 4000,
+                            regular: 5000,
+                            currency: "BDT",
+                          };
+                        case "Foreign Delegates":
+                          return {
+                            early: 43750,
+                            regular: 56250,
+                            currency: "BDT",
+                            usd_early: 350,
+                            usd_regular: 450,
+                          };
+                        case "Foreign Students":
+                          return {
+                            early: 25000,
+                            regular: 31250,
+                            currency: "BDT",
+                            usd_early: 200,
+                            usd_regular: 250,
+                          };
+                        default:
+                          return {
+                            early: 5000,
+                            regular: 6000,
+                            currency: "BDT",
+                          };
+                      }
+                    };
+
+                    const fees = getFeeStructure();
+                    const isForeign = paymentsData.category?.includes("Foreign");
+
+                    // Determine which fee applies
+                    let amount, phase;
+                    const currentDate = new Date(paperData.payment_date);
+
+                    if (currentDate <= earlyBirdDeadline) {
+                      amount = fees.early;
+                      phase = "Early Bird";
+                    } else if (currentDate > earlyBirdDeadline && currentDate <= regularDeadline) {
+                      amount = fees.regular;
+                      phase = "Regular";
+                    } else {
+                      amount = fees.regular;
+                      phase = "Regular";
+                    }
+
+                    // For foreign delegates, show USD equivalent in the phase description
+                    if (isForeign) {
+                      const usdAmount = phase === "Early Bird" ? fees.usd_early : fees.usd_regular;
+                      phase = `${phase} (${usdAmount} USD)`;
+                    }
+
+                    const additionalPageFee = paperData.additionalPage
+                      ? paperData.additionalPage * 1000
+                      : 0;
+                    const TotalAmount = amount + additionalPageFee;
+                    return (
+                      <>
+                      <td className="border border-slate-200 px-4 py-3 text-slate-600">{TotalAmount} {fees.currency}</td>
+                      <td className="border border-slate-200 px-4 py-3 text-slate-600">{phase}</td>
+                      </>
+                    );
+
+                  })()}
                   <td className="border border-slate-200 px-4 py-3 text-slate-600">{paperData.additionalPage}</td>
                 </tr>
               ) : (

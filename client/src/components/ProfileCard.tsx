@@ -10,7 +10,7 @@ interface ProfileCardProps {
 
 const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
   return (
-    <div className="w-full sm:w-11/12 mx-auto p-6 bg-gradient-to-br from-red-50 to-white border-0 rounded-xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+    <div className="w-full sm:w-11/12 mx-auto p-6   transition-all duration-300  hover:-translate-y-1">
       <div className="flex flex-col items-center">
         <div className="w-28 h-28 sm:w-40 sm:h-40 overflow-hidden rounded-full border-1 border-red-500 shadow-md">
           <img src={profile.imageUrl} alt={profile.name} className="object-cover w-full h-full transition-transform hover:scale-110 duration-500" />

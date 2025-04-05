@@ -252,7 +252,7 @@ const posterSessionManagementCommittee = [
 ];
 
 
-export default function Committees() {
+export default function Committees() { 
   return (
     <main className="Committees-screen flex flex-col min-h-screen bg-[url(/bg-texture.jpg)]">
       <div className="fixed top-0 left-0 right-0 z-50">

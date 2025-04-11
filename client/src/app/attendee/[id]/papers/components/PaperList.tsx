@@ -121,7 +121,7 @@ export default function PaperList({
               </div>
             </div>
 
-            {!paper.payment_status && (
+            {/* {!paper.payment_status && (
               <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row justify-center lg:justify-end items-center gap-3">
                 <button
                   onClick={() => onPayPaper(paper)}
@@ -138,7 +138,7 @@ export default function PaperList({
                   Delete
                 </button>
               </div>
-            )}
+            )} */}
           </div>
           {/* Payment Amount Information */}
           {!paper.payment_status && (
@@ -243,6 +243,65 @@ export default function PaperList({
               </div>
             </div>
           )}
+
+        {/* Payment Deadline Expired */}
+          {!paper.payment_status && (
+            <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between p-5 bg-white border-l-4 border-red-500 rounded-lg shadow-md">
+            <div className="flex flex-col">
+              <div className="flex items-center">
+                <svg
+                  className="w-6 h-6 text-red-500 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Payment Deadline Expired
+                </h3>
+              </div>
+              <p className="text-base text-gray-600 mt-2 ml-8">
+                The payment window for this paper closed on{" "}
+                <span className="font-medium text-red-600">
+                  10th April 2025
+                </span>
+                . Please contact the conference organizers for
+                further assistance.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 sm:ml-4">
+              <button
+                onClick={() => onDeletePaper(paper)}
+                className="inline-flex items-center justify-center px-5 py-2.5 bg-red-500 hover:bg-red-400 text-white rounded-md transition-all duration-300 shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-base font-medium"
+              >
+                <svg
+                  className="w-10 h-10 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                Remove Paper
+              </button>
+            </div>
+          </div>
+          )}
+          
         </div>
       ))}
     </div>
